@@ -40,6 +40,6 @@ var (
 		Name:            "devnet",
 		FullNodeUrl:     "https://fullnode.devnet.sui.io:443",
 		GraphqlUrl:      "https://graphql.coming.chat/sui-devnet/graphql",
-		ContractAddress: "0xcadbc945140f0bf3ac125cce71ff51404a5fb452",
+		ContractAddress: "0xc5ee772bc6cabe728810e3282aef5333aaaa8cfd",
 	}
 )

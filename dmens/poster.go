@@ -34,13 +34,18 @@ func NewPoster(posterConfig PosterConfig, configuration Configuration) (*Poster,
 	if err != nil {
 		return nil, err
 	}
-	return &Poster{
+	poster := &Poster{
 		Configuration: configuration,
 		chain:         ct,
 		address:       addr,
 		packageId:     packId,
 		PosterConfig:  posterConfig,
-	}, nil
+	}
+	err = poster.initialDmensObjecId()
+	if err != nil {
+		return nil, err
+	}
+	return poster, nil
 }
 
 func (p *Poster) IsRegister() bool {
