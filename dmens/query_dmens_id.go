@@ -9,15 +9,14 @@ func (p *Poster) QueryDmensObjectId() *Query {
 			) {
 			  nodes {
 				objectId
+				fields
 			  }
 			}
 		  }
 		`,
 		Variables: map[string]interface{}{
-			"owner": map[string]string{
-				"AddressOwner": p.Address,
-			},
-			"type": p.ContractAddress + "::dmens::DmensMeta",
+			"owner": p.addressOwner(),
+			"type":  p.dmensMetaObjectType(),
 		},
 	}
 }
@@ -25,10 +24,21 @@ func (p *Poster) QueryDmensObjectId() *Query {
 // FetchDmensObjecId After ios or android call profileRegister and send that transaction,
 // this func should be recalled again to fetch the registered dmens object id
 func (p *Poster) FetchDmensObjecId() error {
+	type Field struct {
+		Fields struct {
+			Id struct {
+				Id string `json:"id"`
+			} `json:"id"`
+		} `json:"fields"`
+	}
 	var res = struct {
 		AllSuiObjects struct {
 			Nodes []struct {
 				ObjectId string `json:"objectId"`
+				Fields   struct {
+					Follows    Field `json:"follows"`
+					DmensTable Field `json:"dmens_table"`
+				} `json:"fields"`
 			} `json:"nodes"`
 		} `json:"allSuiObjects"`
 	}{}
@@ -39,8 +49,13 @@ func (p *Poster) FetchDmensObjecId() error {
 	}
 	if len(res.AllSuiObjects.Nodes) == 0 {
 		p.DmensNftId = ""
+		p.dmensTableId = ""
+		p.followsId = ""
 		return ErrUserNotRegistered
 	}
-	p.DmensNftId = res.AllSuiObjects.Nodes[0].ObjectId
+	node := res.AllSuiObjects.Nodes[0]
+	p.DmensNftId = node.ObjectId
+	p.dmensTableId = node.Fields.DmensTable.Fields.Id.Id
+	p.followsId = node.Fields.Follows.Fields.Id.Id
 	return nil
 }

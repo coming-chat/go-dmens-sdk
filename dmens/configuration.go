@@ -17,6 +17,9 @@ type Configuration struct {
 type PosterConfig struct {
 	Address    string
 	DmensNftId string
+
+	dmensTableId string
+	followsId    string
 }
 
 var (
@@ -37,6 +40,7 @@ var (
 		Name:            "devnet",
 		FullNodeUrl:     "https://fullnode.devnet.sui.io:443",
 		GraphqlUrl:      "https://graphql.coming.chat/sui-devnet/graphql",
-		ContractAddress: "0xc5ee772bc6cabe728810e3282aef5333aaaa8cfd",
+		ContractAddress: "0x307772d54928d34b9a45bac2f436db7e3e33fe5e",
+		GlobalProfileId: "0x9d4366f1bc390774fb1783cad08f6b28b9df7fd3",
 	}
 )

@@ -29,3 +29,17 @@ func (p *Poster) makeQueryOut(q *Query, out interface{}) error {
 	}
 	return nil
 }
+
+func (p *Poster) dmensMetaObjectType() string {
+	return p.ContractAddress + "::dmens::DmensMeta"
+}
+
+func (p *Poster) dmensObjectType() string {
+	return "0x2::dynamic_field::Field<u64, " + p.ContractAddress + "::dmens::Dmens>"
+}
+
+func (p *Poster) addressOwner() map[string]string {
+	return map[string]string{
+		"AddressOwner": p.Address,
+	}
+}
