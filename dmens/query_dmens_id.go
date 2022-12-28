@@ -1,11 +1,5 @@
 package dmens
 
-import (
-	"errors"
-
-	"github.com/coming-chat/go-dmens-sdk/graphql"
-)
-
 func (p *Poster) QueryDmensObjectId() *Query {
 	return &Query{
 		Query: `
@@ -29,7 +23,7 @@ func (p *Poster) QueryDmensObjectId() *Query {
 }
 
 // FetchDmensObjecId After ios or android call profileRegister and send that transaction,
-//this func should be recalled again to fetch the registered dmens object id
+// this func should be recalled again to fetch the registered dmens object id
 func (p *Poster) FetchDmensObjecId() error {
 	var res = struct {
 		AllSuiObjects struct {
@@ -39,12 +33,13 @@ func (p *Poster) FetchDmensObjecId() error {
 		} `json:"allSuiObjects"`
 	}{}
 	query := p.QueryDmensObjectId()
-	err := graphql.FetchGraphQL(query.Query, query.OperationName, query.Variables, p.GraphqlUrl, &res)
+	err := p.makeQueryOut(query, &res)
 	if err != nil {
-		return errors.New(err.Error())
+		return err
 	}
 	if len(res.AllSuiObjects.Nodes) == 0 {
-		return nil
+		p.DmensNftId = ""
+		return ErrUserNotRegistered
 	}
 	p.DmensNftId = res.AllSuiObjects.Nodes[0].ObjectId
 	return nil

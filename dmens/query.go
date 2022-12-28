@@ -15,9 +15,17 @@ type Query struct {
 
 func (p *Poster) MakeQuery(q *Query) (string, error) {
 	var out json.RawMessage
-	err := graphql.FetchGraphQL(q.Query, q.OperationName, q.Variables, p.GraphqlUrl, &out)
+	err := p.makeQueryOut(q, &out)
 	if err != nil {
-		return "", errors.New(err.Error())
+		return "", err
 	}
 	return string(out), nil
+}
+
+func (p *Poster) makeQueryOut(q *Query, out interface{}) error {
+	err := graphql.FetchGraphQL(q.Query, q.OperationName, q.Variables, p.GraphqlUrl, out)
+	if err != nil {
+		return errors.New(err.Error())
+	}
+	return nil
 }
