@@ -16,7 +16,7 @@ func NewPoster(posterConfig PosterConfig, configuration Configuration) (*Poster,
 		chain:         sui.NewChainWithRpcUrl(configuration.FullNodeUrl),
 		PosterConfig:  posterConfig,
 	}
-	err := poster.initialDmensObjecId()
+	err := poster.FetchDmensObjecId()
 	if err != nil {
 		return nil, err
 	}

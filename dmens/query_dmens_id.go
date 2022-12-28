@@ -28,7 +28,9 @@ func (p *Poster) QueryDmensObjectId() *Query {
 	}
 }
 
-func (p *Poster) initialDmensObjecId() error {
+// FetchDmensObjecId After ios or android call profileRegister and send that transaction,
+//this func should be recalled again to fetch the registered dmens object id
+func (p *Poster) FetchDmensObjecId() error {
 	var res = struct {
 		AllSuiObjects struct {
 			Nodes []struct {
