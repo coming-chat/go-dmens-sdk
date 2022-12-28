@@ -2,9 +2,6 @@ package dmens
 
 const (
 	APP_ID_FOR_COMINGCHAT_APP = 0
-	SuiDevNet                 = "https://fullnode.devnet.sui.io"
-	Module                    = "dmens"
-	GasBudGet                 = 1000
 )
 
 type Configuration struct {
