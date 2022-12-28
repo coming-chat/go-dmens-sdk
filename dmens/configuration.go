@@ -1,7 +1,7 @@
 package dmens
 
 const (
-	APP_ID_FOR_COMINGCHAT_APP = 0
+	appIdForComingchatApp = 0
 )
 
 type Configuration struct {
