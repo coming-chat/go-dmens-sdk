@@ -26,3 +26,38 @@ func TestQueryTwitterByNoteId(t *testing.T) {
 	require.Nil(t, err)
 	t.Log(res)
 }
+
+func TestQueryUserTwitters(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryUserTwitters("", 10, 0)
+	require.Nil(t, err)
+	t.Log(res)
+}
+
+func TestQueryUserFollowing(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryUserFollowing("")
+	require.Nil(t, err)
+	t.Log(res)
+}
+
+func TestQueryUserFollowers(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryUserFollowers("0x3f432b985d6a5bd6f3b8f96a44f9adf272a59bb3")
+	require.Nil(t, err)
+	t.Log(res)
+}
+
+func TestQueryTrendUsers(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryTrendUserList()
+	require.Nil(t, err)
+	t.Log(res)
+}
+
+func TestQueryUserCharaters(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryUserCharacter("")
+	require.Nil(t, err)
+	t.Log(res)
+}

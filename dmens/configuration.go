@@ -41,6 +41,6 @@ var (
 		FullNodeUrl:     "https://fullnode.devnet.sui.io:443",
 		GraphqlUrl:      "https://graphql.coming.chat/sui-devnet/graphql",
 		ContractAddress: "0x307772d54928d34b9a45bac2f436db7e3e33fe5e",
-		GlobalProfileId: "0x9d4366f1bc390774fb1783cad08f6b28b9df7fd3",
+		GlobalProfileId: "0x6a0402a6c37fb14446683ff13bc97d1ee0474ac2",
 	}
 )
