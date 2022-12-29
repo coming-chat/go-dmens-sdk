@@ -96,3 +96,13 @@ func TestQueryTwitterByRefId(t *testing.T) {
 	require.Nil(t, err)
 	t.Log(res)
 }
+
+func TestQueryTwitterStatusById(t *testing.T) {
+	twitterId := "0xd1b1fa2d807fac385b9e3897778091e6074942c4"
+	viewer := ""
+
+	poster := DefaultPoster(t)
+	res, err := poster.QueryTwitterStatusById(twitterId, viewer)
+	require.Nil(t, err)
+	t.Log(res)
+}
