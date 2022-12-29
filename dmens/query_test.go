@@ -61,3 +61,38 @@ func TestQueryUserCharaters(t *testing.T) {
 	require.Nil(t, err)
 	t.Log(res)
 }
+
+func TestQueryUsersByName(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryUsersByName("g", 10, 0)
+	require.Nil(t, err)
+	t.Log(res)
+}
+
+func TestQueryUserInfoByAddress(t *testing.T) {
+	poster := DefaultPoster(t)
+
+	// query default poster's info
+	res, err := poster.QueryUserInfoByAddress("")
+	require.Nil(t, err)
+	t.Log(res)
+
+	// query specified user's info
+	res, err = poster.QueryUserInfoByAddress("0x111")
+	require.Nil(t, err)
+	t.Log(res)
+}
+
+func TestQueryUserTwittersList(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryUserTwittersList("", 10, 0)
+	require.Nil(t, err)
+	t.Log(res)
+}
+
+func TestQueryTwitterByRefId(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryTwittersList(0, "", "", 10, 0)
+	require.Nil(t, err)
+	t.Log(res)
+}
