@@ -2,7 +2,7 @@ package dmens
 
 import "encoding/json"
 
-func (p *Poster) QueryTwitterByNoteId(noteId string, first, offset int) (string, error) {
+func (p *Poster) QueryTwitterByNoteId(noteId string, pageSize, offset int) (string, error) {
 	query := Query{
 		Query: `
 		query TwitterByNoteId(
@@ -49,28 +49,26 @@ func (p *Poster) QueryTwitterByNoteId(noteId string, first, offset int) (string,
 		Variables: map[string]interface{}{
 			"type":   p.dmensObjectType(),
 			"noteId": noteId,
-			"first":  first,
+			"first":  pageSize,
 			"offset": offset,
 		},
 	}
 
 	var out struct {
-		AllSuiObjects struct {
-			TotalCount int `json:"totalCount"`
-			PageInfo   struct {
-				HasNextPage bool `json:"hasNextPage"`
-			} `json:"pageInfo"`
-			Nodes json.RawMessage `json:"nodes"`
-		} `json:"allSuiObjects"`
+		TotalCount int `json:"totalCount"`
+		PageInfo   struct {
+			HasNextPage bool `json:"hasNextPage"`
+		} `json:"pageInfo"`
+		Nodes json.RawMessage `json:"nodes"`
 	}
-	err := p.makeQueryOut(&query, &out)
+	err := p.makeQueryOut(&query, "allSuiObjects", &out)
 	if err != nil {
 		return "", err
 	}
 	var res = map[string]interface{}{
-		"totalCount":  out.AllSuiObjects.TotalCount,
-		"hasNextPage": out.AllSuiObjects.PageInfo.HasNextPage,
-		"nodes":       out.AllSuiObjects.Nodes,
+		"totalCount":  out.TotalCount,
+		"hasNextPage": out.PageInfo.HasNextPage,
+		"nodes":       out.Nodes,
 	}
 	data, err := json.Marshal(res)
 	if err != nil {

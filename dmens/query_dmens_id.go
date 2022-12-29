@@ -31,29 +31,25 @@ func (p *Poster) FetchDmensObjecId() error {
 			} `json:"id"`
 		} `json:"fields"`
 	}
-	var res = struct {
-		AllSuiObjects struct {
-			Nodes []struct {
-				ObjectId string `json:"objectId"`
-				Fields   struct {
-					Follows    Field `json:"follows"`
-					DmensTable Field `json:"dmens_table"`
-				} `json:"fields"`
-			} `json:"nodes"`
-		} `json:"allSuiObjects"`
+	var out = []struct {
+		ObjectId string `json:"objectId"`
+		Fields   struct {
+			Follows    Field `json:"follows"`
+			DmensTable Field `json:"dmens_table"`
+		} `json:"fields"`
 	}{}
 	query := p.QueryDmensObjectId()
-	err := p.makeQueryOut(query, &res)
+	err := p.makeQueryOut(query, "allSuiObjects.nodes", &out)
 	if err != nil {
 		return err
 	}
-	if len(res.AllSuiObjects.Nodes) == 0 {
+	if len(out) == 0 {
 		p.DmensNftId = ""
 		p.dmensTableId = ""
 		p.followsId = ""
 		return ErrUserNotRegistered
 	}
-	node := res.AllSuiObjects.Nodes[0]
+	node := out[0]
 	p.DmensNftId = node.ObjectId
 	p.dmensTableId = node.Fields.DmensTable.Fields.Id.Id
 	p.followsId = node.Fields.Follows.Fields.Id.Id

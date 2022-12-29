@@ -3,7 +3,7 @@ package dmens
 import "encoding/json"
 
 // @param user If the user is empty, the poster's address will be queried.
-func (p *Poster) QueryUserTwitters(user string, first, offset int) (string, error) {
+func (p *Poster) QueryUserTwitters(user string, pageSize, offset int) (string, error) {
 	if user == "" {
 		user = p.Address
 	}
@@ -55,28 +55,26 @@ func (p *Poster) QueryUserTwitters(user string, first, offset int) (string, erro
 					},
 				},
 			},
-			"first":  first,
+			"first":  pageSize,
 			"offset": offset,
 		},
 	}
 
 	var out struct {
-		AllSuiObjects struct {
-			TotalCount int `json:"totalCount"`
-			PageInfo   struct {
-				HasNextPage bool `json:"hasNextPage"`
-			} `json:"pageInfo"`
-			Nodes json.RawMessage `json:"nodes"`
-		} `json:"allSuiObjects"`
+		TotalCount int `json:"totalCount"`
+		PageInfo   struct {
+			HasNextPage bool `json:"hasNextPage"`
+		} `json:"pageInfo"`
+		Nodes json.RawMessage `json:"nodes"`
 	}
-	err := p.makeQueryOut(&query, &out)
+	err := p.makeQueryOut(&query, "allSuiObjects", &out)
 	if err != nil {
 		return "", err
 	}
 	var res = map[string]interface{}{
-		"totalCount":  out.AllSuiObjects.TotalCount,
-		"hasNextPage": out.AllSuiObjects.PageInfo.HasNextPage,
-		"nodes":       out.AllSuiObjects.Nodes,
+		"totalCount":  out.TotalCount,
+		"hasNextPage": out.PageInfo.HasNextPage,
+		"nodes":       out.Nodes,
 	}
 	data, err := json.Marshal(res)
 	if err != nil {

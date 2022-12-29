@@ -3,6 +3,7 @@ package graphql
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -65,7 +66,9 @@ func FetchGraphQL(query, operationName string, variables map[string]interface{},
 		return err
 	}
 	if resObject.Errors != nil && len(resObject.Errors) > 0 {
-		return resObject.Errors[0]
+		basicError := errors.New(resObject.Errors[0].Error())
+		// If not converted to a basic error, it may cause Android to crash
+		return basicError
 	}
 	return json.Unmarshal(resObject.Data, out)
 }

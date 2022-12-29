@@ -21,13 +21,11 @@ func (p *Poster) QueryTrendUserList() (string, error) {
 		},
 	}
 
-	var out struct {
-		TrendingCharacters json.RawMessage `json:"trendingCharacters"`
-	}
-	err := p.makeQueryOut(&query, &out)
+	var out json.RawMessage
+	err := p.makeQueryOut(&query, "trendingCharacters", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out.TrendingCharacters), nil
+	return string(out), nil
 }

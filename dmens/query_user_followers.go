@@ -33,13 +33,11 @@ func (p *Poster) QueryUserFollowers(user string) (string, error) {
 		},
 	}
 
-	var out struct {
-		Follower json.RawMessage `json:"follower"`
-	}
-	err := p.makeQueryOut(&query, &out)
+	var out json.RawMessage
+	err := p.makeQueryOut(&query, "follower", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out.Follower), nil
+	return string(out), nil
 }

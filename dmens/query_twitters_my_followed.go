@@ -2,7 +2,7 @@ package dmens
 
 import "encoding/json"
 
-func (p *Poster) QueryTwittersMyFollowed(first int, offset int) (string, error) {
+func (p *Poster) QueryTwittersMyFollowed(pageSize int, offset int) (string, error) {
 	query := &Query{
 		Query: `
 		query TwittersMyFollowed(
@@ -49,7 +49,7 @@ func (p *Poster) QueryTwittersMyFollowed(first int, offset int) (string, error) 
 			"dmensMetaObjectType": p.dmensMetaObjectType(),
 			"dmensObjectType":     p.dmensObjectType(),
 			"objectOwner":         p.followsId,
-			"first":               first,
+			"first":               pageSize,
 			"offset":              offset,
 			"fieldJson": map[string]map[string]map[string]NoteAction{
 				"value": {"fields": {"action": ACTION_POST}},
@@ -58,23 +58,21 @@ func (p *Poster) QueryTwittersMyFollowed(first int, offset int) (string, error) 
 	}
 
 	var out struct {
-		Home struct {
-			TotalCount int `json:"totalCount"`
-			PageInfo   struct {
-				HasNextPage bool `json:"hasNextPage"`
-			} `json:"pageInfo"`
-			Nodes json.RawMessage `json:"nodes"`
-		} `json:"home"`
+		TotalCount int `json:"totalCount"`
+		PageInfo   struct {
+			HasNextPage bool `json:"hasNextPage"`
+		} `json:"pageInfo"`
+		Nodes json.RawMessage `json:"nodes"`
 	}
-	err := p.makeQueryOut(query, &out)
+	err := p.makeQueryOut(query, "home", &out)
 	if err != nil {
 		return "", err
 	}
 
 	res := map[string]interface{}{
-		"totalCount":  out.Home.TotalCount,
-		"hasNextPage": out.Home.PageInfo.HasNextPage,
-		"nodes":       out.Home.Nodes,
+		"totalCount":  out.TotalCount,
+		"hasNextPage": out.PageInfo.HasNextPage,
+		"nodes":       out.Nodes,
 	}
 	data, err := json.Marshal(res)
 	if err != nil {

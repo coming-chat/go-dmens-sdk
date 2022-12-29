@@ -5,21 +5,21 @@ import (
 	"fmt"
 )
 
-func (p *Poster) QueryTwittersList(action int, refId string, poster string, first, offset int) (string, error) {
+func (p *Poster) QueryTwittersList(action int, refId string, poster string, pageSize, offset int) (string, error) {
 	fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, ref_id: "%v", poster:"%v"}}}}`, action, refId, poster)
-	return p.queryTwittersList(first, offset, fieldJson)
+	return p.queryTwittersList(pageSize, offset, fieldJson)
 }
 
 // @param user If the user is empty, the poster's address will be queried.
-func (p *Poster) QueryUserTwittersList(user string, first, offset int) (string, error) {
+func (p *Poster) QueryUserTwittersList(user string, pageSize, offset int) (string, error) {
 	if user == "" {
 		user = p.Address
 	}
 	fieldJson := `fields: { contains: {value: {fields: {action: 0, poster: "` + user + `"}}}}`
-	return p.queryTwittersList(first, offset, fieldJson)
+	return p.queryTwittersList(pageSize, offset, fieldJson)
 }
 
-func (p *Poster) queryTwittersList(first, offset int, fieldJson string) (string, error) {
+func (p *Poster) queryTwittersList(pageSize, offset int, fieldJson string) (string, error) {
 	queryString := fmt.Sprintf(`
 	query TwittersLists(
 		$type: String
@@ -66,19 +66,17 @@ func (p *Poster) queryTwittersList(first, offset int, fieldJson string) (string,
 		Query: queryString,
 		Variables: map[string]interface{}{
 			"type":      p.dmensObjectType(),
-			"first":     first,
+			"first":     pageSize,
 			"offset":    offset,
 			"fieldJson": fieldJson,
 		},
 	}
 
-	var out struct {
-		AllSuiObjects json.RawMessage `json:"allSuiObjects"`
-	}
-	err := p.makeQueryOut(&query, &out)
+	var out json.RawMessage
+	err := p.makeQueryOut(&query, "allSuiObjects", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out.AllSuiObjects), nil
+	return string(out), nil
 }

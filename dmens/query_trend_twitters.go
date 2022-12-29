@@ -2,7 +2,7 @@ package dmens
 
 import "encoding/json"
 
-func (p *Poster) QueryTrendTwittersList(first, offset int) (string, error) {
+func (p *Poster) QueryTrendTwittersList(pageSize, offset int) (string, error) {
 	query := Query{
 		Query: `
 		query trendTwittersList($type: String, $first: Int, $offset: Int) {
@@ -35,19 +35,17 @@ func (p *Poster) QueryTrendTwittersList(first, offset int) (string, error) {
 		`,
 		Variables: map[string]interface{}{
 			"type":   p.dmensObjectType(),
-			"first":  first,
+			"first":  pageSize,
 			"offset": offset,
 		},
 	}
 
-	var out struct {
-		TrendingNotes json.RawMessage `json:"trendingNotes"`
-	}
-	err := p.makeQueryOut(&query, &out)
+	var out json.RawMessage
+	err := p.makeQueryOut(&query, "trendingNotes", &out)
 	if err != nil {
 		return "", err
 	}
 
-	res := string(out.TrendingNotes)
+	res := string(out)
 	return res, nil
 }

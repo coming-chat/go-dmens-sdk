@@ -50,13 +50,11 @@ func (p *Poster) QueryUserCharacter(user string) (string, error) {
 		},
 	}
 
-	var out struct {
-		AllSuiObjects json.RawMessage `json:"allSuiObjects"`
-	}
-	err := p.makeQueryOut(&query, &out)
+	var out json.RawMessage
+	err := p.makeQueryOut(&query, "allSuiObjects", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out.AllSuiObjects), nil
+	return string(out), nil
 }

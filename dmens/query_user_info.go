@@ -14,12 +14,12 @@ func (p *Poster) QueryUserInfoByAddress(address string) (string, error) {
 	return p.queryUserInfos(1, 0, filter)
 }
 
-func (p *Poster) QueryUsersByName(name string, first, offset int) (string, error) {
+func (p *Poster) QueryUsersByName(name string, pageSize, offset int) (string, error) {
 	filter := `filter: {name: {likeInsensitive: "%` + name + `%"}}`
-	return p.queryUserInfos(first, offset, filter)
+	return p.queryUserInfos(pageSize, offset, filter)
 }
 
-func (p *Poster) queryUserInfos(first, offset int, filter string) (string, error) {
+func (p *Poster) queryUserInfos(pageSize, offset int, filter string) (string, error) {
 	queryString := fmt.Sprintf(`
 	query UserInfos($first: Int, $offset:Int) {
 		allSuiAddressNames(
@@ -44,18 +44,16 @@ func (p *Poster) queryUserInfos(first, offset int, filter string) (string, error
 	query := Query{
 		Query: queryString,
 		Variables: map[string]interface{}{
-			"first":  first,
+			"first":  pageSize,
 			"offset": offset,
 		},
 	}
 
-	var out struct {
-		AllSuiAddressNames json.RawMessage `json:"allSuiAddressNames"`
-	}
-	err := p.makeQueryOut(&query, &out)
+	var out json.RawMessage
+	err := p.makeQueryOut(&query, "allSuiAddressNames", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out.AllSuiAddressNames), nil
+	return string(out), nil
 }

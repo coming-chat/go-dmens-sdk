@@ -2,7 +2,8 @@ package dmens
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/coming-chat/go-dmens-sdk/graphql"
 )
@@ -15,19 +16,47 @@ type Query struct {
 
 func (p *Poster) MakeQuery(q *Query) (string, error) {
 	var out json.RawMessage
-	err := p.makeQueryOut(q, &out)
+	err := p.makeQueryOut(q, "", &out)
 	if err != nil {
 		return "", err
 	}
 	return string(out), nil
 }
 
-func (p *Poster) makeQueryOut(q *Query, out interface{}) error {
-	err := graphql.FetchGraphQL(q.Query, q.OperationName, q.Variables, p.GraphqlUrl, out)
-	if err != nil {
-		return errors.New(err.Error())
+func (p *Poster) makeQueryOut(q *Query, path string, out interface{}) error {
+	if path == "" {
+		return graphql.FetchGraphQL(q.Query, q.OperationName, q.Variables, p.GraphqlUrl, out)
 	}
-	return nil
+
+	var oo interface{}
+	err := graphql.FetchGraphQL(q.Query, q.OperationName, q.Variables, p.GraphqlUrl, &oo)
+	if err != nil {
+		return err
+	}
+
+	var (
+		m  map[string]interface{}
+		ok bool
+	)
+	paths := strings.Split(path, ".")
+	for _, path := range paths {
+		if path == "" {
+			continue
+		}
+		if m, ok = oo.(map[string]interface{}); ok {
+			if oo, ok = m[path]; ok {
+				continue
+			}
+		}
+		return fmt.Errorf("Response parsing error, path '%v' not found.", path)
+	}
+
+	data, err := json.Marshal(oo)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(data, out)
 }
 
 func (p *Poster) dmensMetaObjectType() string {
