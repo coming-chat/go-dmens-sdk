@@ -10,7 +10,7 @@ const graphqlURL = "https://graphql.coming.chat/sui-devnet/graphql"
 
 func TestXxx(t *testing.T) {
 	query := `
-	query trendTwittersList($type: String) {
+	query trendNoteList($type: String) {
 		trendingNotes(
 		  filter: { status: { equalTo: "Exists" } }
 		  objectType: $type

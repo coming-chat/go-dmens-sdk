@@ -6,30 +6,30 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestQueryTwittersMyFollowed(t *testing.T) {
+func TestQueryNotesMyFollowed(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryTwittersMyFollowed(10, 0)
+	res, err := poster.QueryNotesMyFollowed(10, 0)
 	require.Nil(t, err)
 	t.Log(res)
 }
 
-func TestQueryTrendTwitters(t *testing.T) {
+func TestQueryTrendNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryTrendTwittersList(10, 0)
+	res, err := poster.QueryTrendNoteList(10, 0)
 	require.Nil(t, err)
 	t.Log(res)
 }
 
-func TestQueryTwitterByNoteId(t *testing.T) {
+func TestQueryNoteById(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryTwitterByNoteId("0xc4dbf29b5513f7695d6370e094c5ad03fb44acc2", 10, 0)
+	res, err := poster.QueryNoteById("0xc4dbf29b5513f7695d6370e094c5ad03fb44acc2")
 	require.Nil(t, err)
 	t.Log(res)
 }
 
-func TestQueryUserTwitters(t *testing.T) {
+func TestQueryUserNotes(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserTwitters("", 10, 0)
+	res, err := poster.QueryUserNotes("", 10, 0)
 	require.Nil(t, err)
 	t.Log(res)
 }
@@ -83,26 +83,26 @@ func TestQueryUserInfoByAddress(t *testing.T) {
 	t.Log(res)
 }
 
-func TestQueryUserTwittersList(t *testing.T) {
+func TestQueryUserNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserTwittersList("", 10, 0)
+	res, err := poster.QueryUserNoteList("", 10, 0)
 	require.Nil(t, err)
 	t.Log(res)
 }
 
-func TestQueryTwitterByRefId(t *testing.T) {
+func TestQueryNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryTwittersList(0, "", "", 10, 0)
+	res, err := poster.QueryNoteList(0, "", "", 10, 0)
 	require.Nil(t, err)
 	t.Log(res)
 }
 
-func TestQueryTwitterStatusById(t *testing.T) {
-	twitterId := "0xd1b1fa2d807fac385b9e3897778091e6074942c4"
+func TestQueryNoteStatusById(t *testing.T) {
+	noteId := "0xd1b1fa2d807fac385b9e3897778091e6074942c4"
 	viewer := ""
 
 	poster := DefaultPoster(t)
-	res, err := poster.QueryTwitterStatusById(twitterId, viewer)
+	res, err := poster.QueryNoteStatusById(noteId, viewer)
 	require.Nil(t, err)
 	t.Log(res)
 }

@@ -2,21 +2,20 @@ package dmens
 
 import "encoding/json"
 
-func (p *Poster) QueryTwitterByNoteId(noteId string, pageSize, offset int) (string, error) {
+// @param user If the user is empty, the poster's address will be queried.
+func (p *Poster) QueryUserNotes(user string, pageSize, offset int) (string, error) {
+	if user == "" {
+		user = p.Address
+	}
 	query := Query{
 		Query: `
-		query TwitterByNoteId(
-			$type: String
-			$noteId: String
-			$first: Int = 10
-			$offset: Int = 0
-		  ) {
+		query userNotes($type: String, $fieldJson: JSON, $first: Int, $offset: Int) {
 			allSuiObjects(
 			  filter: {
-				dataType: { equalTo: "moveObject" }
 				status: { equalTo: "Exists" }
+				dataType: { equalTo: "moveObject" }
 				type: { equalTo: $type }
-				objectId: { equalTo: $noteId }
+				fields: { contains: $fieldJson }
 			  }
 			  orderBy: CREATE_TIME_DESC
 			  first: $first
@@ -29,8 +28,8 @@ func (p *Poster) QueryTwitterByNoteId(noteId string, pageSize, offset int) (stri
 			  nodes {
 				createTime
 				dataType
-				digest
 				fields
+				digest
 				hasPublicTransfer
 				isUpdate
 				nodeId
@@ -47,8 +46,15 @@ func (p *Poster) QueryTwitterByNoteId(noteId string, pageSize, offset int) (stri
 		  }
 		`,
 		Variables: map[string]interface{}{
-			"type":   p.dmensObjectType(),
-			"noteId": noteId,
+			"type": p.dmensObjectType(),
+			"fieldJson": map[string]map[string]map[string]interface{}{
+				"value": {
+					"fields": {
+						"action": ACTION_POST,
+						"poster": user,
+					},
+				},
+			},
 			"first":  pageSize,
 			"offset": offset,
 		},

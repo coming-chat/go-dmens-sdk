@@ -2,10 +2,10 @@ package dmens
 
 import "encoding/json"
 
-func (p *Poster) QueryTwittersMyFollowed(pageSize int, offset int) (string, error) {
+func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) {
 	query := &Query{
 		Query: `
-		query TwittersMyFollowed(
+		query NotesMyFollowed(
 			$dmensMetaObjectType: String
 			$dmensObjectType: String
 			$objectOwner: String
