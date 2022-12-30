@@ -1,7 +1,5 @@
 package dmens
 
-import "encoding/json"
-
 // @param user If the user is empty, the poster's address will be queried.
 func (p *Poster) QueryUserFollowers(user string) (string, error) {
 	if user == "" {
@@ -20,8 +18,11 @@ func (p *Poster) QueryUserFollowers(user string) (string, error) {
 			  profileId: $profileId
 			) {
 			  totalCount
-			  nodes {
-				followerAddress
+			  edges {
+				cursor
+				node {
+				  fields
+				}
 			  }
 			}
 		  }
@@ -33,11 +34,11 @@ func (p *Poster) QueryUserFollowers(user string) (string, error) {
 		},
 	}
 
-	var out json.RawMessage
+	var out rawUserFollowPage
 	err := p.makeQueryOut(&query, "follower", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out), nil
+	return out.MapToUserPage().JsonString()
 }

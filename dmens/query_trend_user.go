@@ -1,8 +1,6 @@
 package dmens
 
-import "encoding/json"
-
-func (p *Poster) QueryTrendUserList() (string, error) {
+func (p *Poster) QueryTrendUserList(pageSize int) (string, error) {
 	query := Query{
 		Query: `
 		query trendingCharacters($first: Int, $profileId: String) {
@@ -16,16 +14,16 @@ func (p *Poster) QueryTrendUserList() (string, error) {
 		  }
 		`,
 		Variables: map[string]interface{}{
-			"first":     20,
+			"first":     pageSize,
 			"profileId": p.GlobalProfileId,
 		},
 	}
 
-	var out json.RawMessage
-	err := p.makeQueryOut(&query, "trendingCharacters", &out)
+	var out []User
+	err := p.makeQueryOut(&query, "trendingCharacters.nodes", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out), nil
+	return JsonString(out)
 }

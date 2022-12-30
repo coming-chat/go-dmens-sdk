@@ -1,12 +1,11 @@
 package dmens
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
-func (p *Poster) QueryNoteList(action int, refId string, poster string, pageSize, offset int) (string, error) {
-	fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, ref_id: "%v", poster:"%v"}}}}`, action, refId, poster)
+func (p *Poster) QueryReplyNoteList(noteId string, pageSize, offset int) (string, error) {
+	fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, ref_id: "%v"}}}}`, ACTION_REPLY, noteId)
 	return p.queryNoteList(pageSize, offset, fieldJson)
 }
 
@@ -15,17 +14,13 @@ func (p *Poster) QueryUserNoteList(user string, pageSize, offset int) (string, e
 	if user == "" {
 		user = p.Address
 	}
-	fieldJson := `fields: { contains: {value: {fields: {action: 0, poster: "` + user + `"}}}}`
+	fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, poster: "%v"}}}}`, ACTION_POST, user)
 	return p.queryNoteList(pageSize, offset, fieldJson)
 }
 
 func (p *Poster) queryNoteList(pageSize, offset int, fieldJson string) (string, error) {
 	queryString := fmt.Sprintf(`
-	query NoteLists(
-		$type: String
-		$first: Int
-		$offset: Int
-	  ) {
+	query NoteLists($type: String, $first: Int, $offset: Int) {
 		allSuiObjects(
 		  filter: {
 			dataType: { equalTo: "moveObject" }
@@ -38,25 +33,13 @@ func (p *Poster) queryNoteList(pageSize, offset int, fieldJson string) (string, 
 		  offset: $offset
 		) {
 		  totalCount
-		  pageInfo {
-			hasNextPage
-		  }
-		  nodes {
-			createTime
-			dataType
-			fields
-			digest
-			hasPublicTransfer
-			isUpdate
-			nodeId
-			objectId
-			owner
-			previousTransaction
-			status
-			storageRebate
-			type
-			updateTime
-			version
+		  edges {
+			cursor
+			node {
+			  objectId
+			  fields
+			  createTime
+			}
 		  }
 		}
 	  }
@@ -72,11 +55,11 @@ func (p *Poster) queryNoteList(pageSize, offset int, fieldJson string) (string, 
 		},
 	}
 
-	var out json.RawMessage
+	var out rawNotePage
 	err := p.makeQueryOut(&query, "allSuiObjects", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out), nil
+	return out.MapToNotePage().JsonString()
 }

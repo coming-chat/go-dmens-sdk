@@ -2,8 +2,9 @@ package dmens
 
 import "encoding/json"
 
+// deprated
 // @param user If the user is empty, the poster's address will be queried.
-func (p *Poster) QueryUserCharacter(user string) (string, error) {
+func (p *Poster) queryUserCharacter(user string) (string, error) {
 	if user == "" {
 		user = p.Address
 	}
@@ -22,20 +23,8 @@ func (p *Poster) QueryUserCharacter(user string) (string, error) {
 			  totalCount
 			  nodes {
 				createTime
-				dataType
-				digest
 				fields
-				isUpdate
-				nodeId
-				hasPublicTransfer
-				owner
 				objectId
-				previousTransaction
-				status
-				storageRebate
-				type
-				updateTime
-				version
 			  }
 			}
 		  }

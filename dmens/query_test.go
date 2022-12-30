@@ -27,13 +27,6 @@ func TestQueryNoteById(t *testing.T) {
 	t.Log(res)
 }
 
-func TestQueryUserNotes(t *testing.T) {
-	poster := DefaultPoster(t)
-	res, err := poster.QueryUserNotes("", 10, 0)
-	require.Nil(t, err)
-	t.Log(res)
-}
-
 func TestQueryUserFollowing(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryUserFollowing("")
@@ -50,14 +43,14 @@ func TestQueryUserFollowers(t *testing.T) {
 
 func TestQueryTrendUsers(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryTrendUserList()
+	res, err := poster.QueryTrendUserList(10)
 	require.Nil(t, err)
 	t.Log(res)
 }
 
 func TestQueryUserCharaters(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserCharacter("")
+	res, err := poster.queryUserCharacter("")
 	require.Nil(t, err)
 	t.Log(res)
 }
@@ -90,9 +83,13 @@ func TestQueryUserNoteList(t *testing.T) {
 	t.Log(res)
 }
 
-func TestQueryNoteList(t *testing.T) {
+func TestQueryReplyNoteList(t *testing.T) {
+	noteId := "0xd1b1fa2d807fac385b9e3897778091e6074942c4" // `123123@littlema @hi`
+	noteId = "0xa9af508f0e489658905d7ae6d193864855d71e84"  // `😀😀😀`
+	noteId = "0xc4dbf29b5513f7695d6370e094c5ad03fb44acc2"  // `@Chatgpt Are you ready?👻`
+
 	poster := DefaultPoster(t)
-	res, err := poster.QueryNoteList(0, "", "", 10, 0)
+	res, err := poster.QueryReplyNoteList(noteId, 10, 0)
 	require.Nil(t, err)
 	t.Log(res)
 }

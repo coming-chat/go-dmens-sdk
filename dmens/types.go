@@ -1,6 +1,6 @@
 package dmens
 
-type NoteAction int
+type NoteAction = int
 
 const (
 	ACTION_POST       NoteAction = 0

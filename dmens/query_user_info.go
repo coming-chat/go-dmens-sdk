@@ -1,7 +1,6 @@
 package dmens
 
 import (
-	"encoding/json"
 	"fmt"
 )
 
@@ -21,23 +20,23 @@ func (p *Poster) QueryUsersByName(name string, pageSize, offset int) (string, er
 
 func (p *Poster) queryUserInfos(pageSize, offset int, filter string) (string, error) {
 	queryString := fmt.Sprintf(`
-	query UserInfos($first: Int, $offset:Int) {
+	query UserInfos($first: Int, $offset: Int) {
 		allSuiAddressNames(
 		  first: $first
 		  offset: $offset
 		  %v
 		) {
-		  nodes {
-			address
-			avatar
-			bio
-			name
-			nodeId
-		  }
-		  pageInfo {
-			hasNextPage
-		  }
 		  totalCount
+		  edges {
+			cursor
+			node {
+			  address
+			  avatar
+			  bio
+			  name
+			  nodeId
+			}
+		  }
 		}
 	  }
 	`, filter)
@@ -49,11 +48,11 @@ func (p *Poster) queryUserInfos(pageSize, offset int, filter string) (string, er
 		},
 	}
 
-	var out json.RawMessage
+	var out rawUserPage
 	err := p.makeQueryOut(&query, "allSuiAddressNames", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out), nil
+	return out.MapToUserPage().JsonString()
 }

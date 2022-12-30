@@ -4,9 +4,10 @@ type Note struct {
 	CreateTime string `json:"createTime"`
 	NoteId     string `json:"noteId"`
 
-	Text   string `json:"text"`
-	Poster string `json:"poster"`
-	RefId  string `json:"refId"`
+	Action NoteAction `json:"action"`
+	Text   string     `json:"text"`
+	Poster string     `json:"poster"`
+	RefId  string     `json:"refId"`
 }
 
 type NotePage struct {
@@ -15,26 +16,28 @@ type NotePage struct {
 	TotalCount    int    `json:"totalCount"`
 }
 
+type rawFieldsId struct {
+	Id struct {
+		Id string `json:"id"`
+	} `json:"id"`
+}
+
 type rawNote struct {
 	CreateTime string `json:"createTime,omitempty"`
 	ObjectId   string `json:"objectId,omitempty"`
 
 	Fields *struct {
-		// Id struct {
-		// 	Id string `json:"id"`
-		// } `json:"id"`
+		// rawFieldsId
 		// Name  string `json:"name"`
 		Value struct {
 			// Type   string `json:"type"`
 			Fields struct {
-				Text   string     `json:"text"`
 				Action NoteAction `json:"action"`
+				Text   string     `json:"text"`
 				Poster string     `json:"poster"`
 				RefId  string     `json:"ref_id"`
 
-				// Id struct {
-				// 	Id string `json:"id"`
-				// } `json:"id"`
+				// rawFieldsId
 				// Url    string     `json:"url"`
 				// AppId  int        `json:"app_id"`
 			} `json:"fields"`
@@ -64,12 +67,14 @@ type rawNotePage struct {
 }
 
 func (a *rawNote) MapToNote() *Note {
+	fields := a.Fields.Value.Fields
 	return &Note{
 		CreateTime: a.CreateTime,
 		NoteId:     a.ObjectId,
-		Text:       a.Fields.Value.Fields.Text,
-		Poster:     a.Fields.Value.Fields.Poster,
-		RefId:      a.Fields.Value.Fields.RefId,
+		Action:     fields.Action,
+		Text:       fields.Text,
+		Poster:     fields.Poster,
+		RefId:      fields.RefId,
 	}
 }
 

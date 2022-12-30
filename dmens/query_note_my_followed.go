@@ -1,7 +1,5 @@
 package dmens
 
-import "encoding/json"
-
 func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) {
 	query := &Query{
 		Query: `
@@ -11,7 +9,7 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) 
 			$objectOwner: String
 			$first: Int
 			$offset: Int
-			$fieldJson: JSON
+			$action: Int
 		  ) {
 			home(
 			  dmensMetaObjectType: $dmensMetaObjectType
@@ -19,28 +17,19 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) 
 			  objectOwner: $objectOwner
 			  first: $first
 			  offset: $offset
-			  filter: { status: { equalTo: "Exists" }, fields: { contains: $fieldJson } }
+			  filter: {
+				status: { equalTo: "Exists" }
+				fields: { contains: { value: { fields: { action: $action } } } }
+			  }
 			) {
 			  totalCount
-			  pageInfo {
-				hasNextPage
-			  }
-			  nodes {
-				createTime
-				dataType
-				digest
-				fields
-				hasPublicTransfer
-				isUpdate
-				nodeId
-				objectId
-				owner
-				previousTransaction
-				status
-				storageRebate
-				type
-				updateTime
-				version
+			  edges {
+				cursor
+				node {
+				  createTime
+				  objectId
+				  fields
+				}
 			  }
 			}
 		  }
@@ -48,36 +37,18 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) 
 		Variables: map[string]interface{}{
 			"dmensMetaObjectType": p.dmensMetaObjectType(),
 			"dmensObjectType":     p.dmensObjectType(),
-			"objectOwner":         p.followsId,
+			"objectOwner":         p.Address,
 			"first":               pageSize,
 			"offset":              offset,
-			"fieldJson": map[string]map[string]map[string]NoteAction{
-				"value": {"fields": {"action": ACTION_POST}},
-			},
+			"action":              ACTION_POST,
 		},
 	}
 
-	var out struct {
-		TotalCount int `json:"totalCount"`
-		PageInfo   struct {
-			HasNextPage bool `json:"hasNextPage"`
-		} `json:"pageInfo"`
-		Nodes json.RawMessage `json:"nodes"`
-	}
+	var out rawNotePage
 	err := p.makeQueryOut(query, "home", &out)
 	if err != nil {
 		return "", err
 	}
 
-	res := map[string]interface{}{
-		"totalCount":  out.TotalCount,
-		"hasNextPage": out.PageInfo.HasNextPage,
-		"nodes":       out.Nodes,
-	}
-	data, err := json.Marshal(res)
-	if err != nil {
-		return "", err
-	}
-
-	return string(data), nil
+	return out.MapToNotePage().JsonString()
 }

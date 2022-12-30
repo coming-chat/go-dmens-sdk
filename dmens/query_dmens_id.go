@@ -25,11 +25,7 @@ func (p *Poster) QueryDmensObjectId() *Query {
 // this func should be recalled again to fetch the registered dmens object id
 func (p *Poster) FetchDmensObjecId() error {
 	type Field struct {
-		Fields struct {
-			Id struct {
-				Id string `json:"id"`
-			} `json:"id"`
-		} `json:"fields"`
+		Fields rawFieldsId `json:"fields"`
 	}
 	var out = []struct {
 		ObjectId string `json:"objectId"`
