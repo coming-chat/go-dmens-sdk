@@ -12,6 +12,18 @@ type Query struct {
 	Query         string
 	OperationName string
 	Variables     map[string]interface{}
+
+	// 因为在 Variables 中使用 cursor 无法实现 `null cursor`, 因此将 cursor 单独取出来
+	// cursor 为空时，表示 null
+	Cursor string
+}
+
+func (q *Query) ActualQueryString() string {
+	if q.Cursor == "" {
+		return strings.Replace(q.Query, "#cursor#", "null", 1)
+	} else {
+		return strings.Replace(q.Query, "#cursor#", `"`+q.Cursor+`"`, 1)
+	}
 }
 
 func (p *Poster) MakeQuery(q *Query) (string, error) {
@@ -25,11 +37,11 @@ func (p *Poster) MakeQuery(q *Query) (string, error) {
 
 func (p *Poster) makeQueryOut(q *Query, path string, out interface{}) error {
 	if path == "" {
-		return graphql.FetchGraphQL(q.Query, q.OperationName, q.Variables, p.GraphqlUrl, out)
+		return graphql.FetchGraphQL(q.ActualQueryString(), q.OperationName, q.Variables, p.GraphqlUrl, out)
 	}
 
 	var oo interface{}
-	err := graphql.FetchGraphQL(q.Query, q.OperationName, q.Variables, p.GraphqlUrl, &oo)
+	err := graphql.FetchGraphQL(q.ActualQueryString(), q.OperationName, q.Variables, p.GraphqlUrl, &oo)
 	if err != nil {
 		return err
 	}

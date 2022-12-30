@@ -1,7 +1,5 @@
 package dmens
 
-import "encoding/json"
-
 // deprated
 // @param user If the user is empty, the poster's address will be queried.
 func (p *Poster) queryUserCharacter(user string) (string, error) {
@@ -10,7 +8,7 @@ func (p *Poster) queryUserCharacter(user string) (string, error) {
 	}
 	query := Query{
 		Query: `
-		query UserCharacterByOwner($first: Int = 10, $owner: JSON, $name: JSON) {
+		query UserCharacterByOwner($owner: JSON, $name: JSON) {
 			allSuiObjects(
 			  filter: {
 				status: { equalTo: "Exists" }
@@ -18,13 +16,14 @@ func (p *Poster) queryUserCharacter(user string) (string, error) {
 				fields: { contains: $name }
 			  }
 			  orderBy: CREATE_TIME_DESC
-			  first: $first
+			  first: 10
 			) {
 			  totalCount
-			  nodes {
-				createTime
-				fields
-				objectId
+			  edges {
+				cursor
+				node {
+				  fields
+				}
 			  }
 			}
 		  }
@@ -39,11 +38,11 @@ func (p *Poster) queryUserCharacter(user string) (string, error) {
 		},
 	}
 
-	var out json.RawMessage
+	var out rawUserFollowPage
 	err := p.makeQueryOut(&query, "allSuiObjects", &out)
 	if err != nil {
 		return "", err
 	}
 
-	return string(out), nil
+	return out.MapToUserPage().JsonString()
 }

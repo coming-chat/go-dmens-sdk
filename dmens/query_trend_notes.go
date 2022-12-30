@@ -1,14 +1,14 @@
 package dmens
 
-func (p *Poster) QueryTrendNoteList(pageSize, offset int) (string, error) {
+func (p *Poster) QueryTrendNoteList(pageSize int, afterCursor string) (string, error) {
 	query := Query{
 		Query: `
-		query trendNoteList($type: String, $first: Int, $offset: Int) {
+		query trendNoteList($type: String, $first: Int) {
 			trendingNotes(
 			  filter: { status: { equalTo: "Exists" } }
 			  objectType: $type
 			  first: $first
-			  offset: $offset
+			  after: #cursor#
 			) {
 			  totalCount
 			  edges {
@@ -23,10 +23,10 @@ func (p *Poster) QueryTrendNoteList(pageSize, offset int) (string, error) {
 		  }
 		`,
 		Variables: map[string]interface{}{
-			"type":   p.dmensObjectType(),
-			"first":  pageSize,
-			"offset": offset,
+			"type":  p.dmensObjectType(),
+			"first": pageSize,
 		},
+		Cursor: afterCursor,
 	}
 
 	var out rawNotePage

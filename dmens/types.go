@@ -9,3 +9,7 @@ const (
 	ACTION_REPLY      NoteAction = 3
 	ACTION_LIKE       NoteAction = 4
 )
+
+type Jsonable interface {
+	JsonString() (string, error)
+}

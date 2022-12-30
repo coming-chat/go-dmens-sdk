@@ -8,14 +8,14 @@ import (
 
 func TestQueryNotesMyFollowed(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryNotesMyFollowed(10, 0)
+	res, err := poster.QueryNotesMyFollowed(10, "")
 	require.Nil(t, err)
 	t.Log(res)
 }
 
 func TestQueryTrendNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryTrendNoteList(10, 0)
+	res, err := poster.QueryTrendNoteList(10, "")
 	require.Nil(t, err)
 	t.Log(res)
 }
@@ -29,14 +29,14 @@ func TestQueryNoteById(t *testing.T) {
 
 func TestQueryUserFollowing(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserFollowing("")
+	res, err := poster.QueryUserFollowing("", 10, "")
 	require.Nil(t, err)
 	t.Log(res)
 }
 
 func TestQueryUserFollowers(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserFollowers("0x3f432b985d6a5bd6f3b8f96a44f9adf272a59bb3")
+	res, err := poster.QueryUserFollowers("0x3f432b985d6a5bd6f3b8f96a44f9adf272a59bb3", 10, "")
 	require.Nil(t, err)
 	t.Log(res)
 }
@@ -57,7 +57,7 @@ func TestQueryUserCharaters(t *testing.T) {
 
 func TestQueryUsersByName(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUsersByName("g", 10, 0)
+	res, err := poster.QueryUsersByName("g", 10, "")
 	require.Nil(t, err)
 	t.Log(res)
 }
@@ -78,7 +78,7 @@ func TestQueryUserInfoByAddress(t *testing.T) {
 
 func TestQueryUserNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserNoteList("", 10, 0)
+	res, err := poster.QueryUserNoteList("", 10, "")
 	require.Nil(t, err)
 	t.Log(res)
 }
@@ -89,7 +89,7 @@ func TestQueryReplyNoteList(t *testing.T) {
 	noteId = "0xc4dbf29b5513f7695d6370e094c5ad03fb44acc2"  // `@Chatgpt Are you ready?👻`
 
 	poster := DefaultPoster(t)
-	res, err := poster.QueryReplyNoteList(noteId, 10, 0)
+	res, err := poster.QueryReplyNoteList(noteId, 10, "")
 	require.Nil(t, err)
 	t.Log(res)
 }

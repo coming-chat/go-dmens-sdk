@@ -10,20 +10,20 @@ func (p *Poster) QueryUserInfoByAddress(address string) (string, error) {
 		address = p.Address
 	}
 	filter := `filter: {address: {equalTo: "` + address + `"}}`
-	return p.queryUserInfos(1, 0, filter)
+	return p.queryUserInfos(1, "", filter)
 }
 
-func (p *Poster) QueryUsersByName(name string, pageSize, offset int) (string, error) {
+func (p *Poster) QueryUsersByName(name string, pageSize int, afterCursor string) (string, error) {
 	filter := `filter: {name: {likeInsensitive: "%` + name + `%"}}`
-	return p.queryUserInfos(pageSize, offset, filter)
+	return p.queryUserInfos(pageSize, afterCursor, filter)
 }
 
-func (p *Poster) queryUserInfos(pageSize, offset int, filter string) (string, error) {
+func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string) (string, error) {
 	queryString := fmt.Sprintf(`
-	query UserInfos($first: Int, $offset: Int) {
+	query UserInfos($first: Int) {
 		allSuiAddressNames(
 		  first: $first
-		  offset: $offset
+		  after: #cursor#
 		  %v
 		) {
 		  totalCount
@@ -43,9 +43,9 @@ func (p *Poster) queryUserInfos(pageSize, offset int, filter string) (string, er
 	query := Query{
 		Query: queryString,
 		Variables: map[string]interface{}{
-			"first":  pageSize,
-			"offset": offset,
+			"first": pageSize,
 		},
+		Cursor: afterCursor,
 	}
 
 	var out rawUserPage

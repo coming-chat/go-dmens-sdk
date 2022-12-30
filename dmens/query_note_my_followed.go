@@ -1,6 +1,6 @@
 package dmens
 
-func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) {
+func (p *Poster) QueryNotesMyFollowed(pageSize int, afterCursor string) (string, error) {
 	query := &Query{
 		Query: `
 		query NotesMyFollowed(
@@ -8,7 +8,6 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) 
 			$dmensObjectType: String
 			$objectOwner: String
 			$first: Int
-			$offset: Int
 			$action: Int
 		  ) {
 			home(
@@ -16,7 +15,7 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) 
 			  dmensObjectType: $dmensObjectType
 			  objectOwner: $objectOwner
 			  first: $first
-			  offset: $offset
+			  after: #cursor#
 			  filter: {
 				status: { equalTo: "Exists" }
 				fields: { contains: { value: { fields: { action: $action } } } }
@@ -39,9 +38,9 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, offset int) (string, error) 
 			"dmensObjectType":     p.dmensObjectType(),
 			"objectOwner":         p.Address,
 			"first":               pageSize,
-			"offset":              offset,
 			"action":              ACTION_POST,
 		},
+		Cursor: afterCursor,
 	}
 
 	var out rawNotePage
