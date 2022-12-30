@@ -1,6 +1,6 @@
 package dmens
 
-func (p *Poster) QueryNoteById(noteId string) (string, error) {
+func (p *Poster) QueryNoteById(noteId string) (*Note, error) {
 	query := Query{
 		Query: `
 		query NoteById(
@@ -38,7 +38,7 @@ func (p *Poster) QueryNoteById(noteId string) (string, error) {
 	var out rawNotePage
 	err := p.makeQueryOut(&query, "allSuiObjects", &out)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return out.MapToNotePage().JsonString()
+	return out.FirstObject().MapToNote(), nil
 }

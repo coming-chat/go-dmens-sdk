@@ -62,3 +62,10 @@ func (a *rawUserFollowPage) MapToUserPage() *UserPage {
 		CurrentCursor: a.Edges[length-1].Cursor,
 	}
 }
+
+func (a *rawUserFollowPage) FirstObject() *rawUserFollow {
+	if len(a.Edges) <= 0 {
+		return nil
+	}
+	return &a.Edges[0].Node
+}

@@ -1,6 +1,6 @@
 package dmens
 
-func (p *Poster) QueryTrendNoteList(pageSize int, afterCursor string) (string, error) {
+func (p *Poster) QueryTrendNoteList(pageSize int, afterCursor string) (*NotePage, error) {
 	query := Query{
 		Query: `
 		query trendNoteList($type: String, $first: Int) {
@@ -32,7 +32,7 @@ func (p *Poster) QueryTrendNoteList(pageSize int, afterCursor string) (string, e
 	var out rawNotePage
 	err := p.makeQueryOut(&query, "trendingNotes", &out)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return out.MapToNotePage().JsonString()
+	return out.MapToNotePage(), nil
 }

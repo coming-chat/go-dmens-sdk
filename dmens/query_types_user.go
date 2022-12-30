@@ -47,3 +47,10 @@ func (n *UserInfo) JsonString() (string, error) {
 func (n *UserPage) JsonString() (string, error) {
 	return JsonString(n)
 }
+
+func (n *UserPage) FirstObject() *UserInfo {
+	if len(n.Users) <= 0 {
+		return nil
+	}
+	return &n.Users[0]
+}

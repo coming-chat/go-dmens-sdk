@@ -2,7 +2,7 @@ package dmens
 
 // deprated
 // @param user If the user is empty, the poster's address will be queried.
-func (p *Poster) queryUserCharacter(user string) (string, error) {
+func (p *Poster) queryUserCharacter(user string) (*UserInfo, error) {
 	if user == "" {
 		user = p.Address
 	}
@@ -41,8 +41,8 @@ func (p *Poster) queryUserCharacter(user string) (string, error) {
 	var out rawUserFollowPage
 	err := p.makeQueryOut(&query, "allSuiObjects", &out)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return out.MapToUserPage().JsonString()
+	return out.FirstObject().MapToUserInfo(), nil
 }

@@ -1,6 +1,6 @@
 package dmens
 
-func (p *Poster) QueryNotesMyFollowed(pageSize int, afterCursor string) (string, error) {
+func (p *Poster) QueryNotesMyFollowed(pageSize int, afterCursor string) (*NotePage, error) {
 	query := &Query{
 		Query: `
 		query NotesMyFollowed(
@@ -46,8 +46,8 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, afterCursor string) (string,
 	var out rawNotePage
 	err := p.makeQueryOut(query, "home", &out)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return out.MapToNotePage().JsonString()
+	return out.MapToNotePage(), nil
 }

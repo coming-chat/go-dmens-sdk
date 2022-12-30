@@ -96,6 +96,13 @@ func (a *rawNotePage) MapToNotePage() *NotePage {
 	}
 }
 
+func (a *rawNotePage) FirstObject() *rawNote {
+	if len(a.Edges) <= 0 {
+		return nil
+	}
+	return &a.Edges[0].Node
+}
+
 func (n *Note) JsonString() (string, error) {
 	return JsonString(n)
 }

@@ -5,20 +5,24 @@ import (
 )
 
 // @param address If the address is empty, the poster's address will be queried.
-func (p *Poster) QueryUserInfoByAddress(address string) (string, error) {
+func (p *Poster) QueryUserInfoByAddress(address string) (*UserInfo, error) {
 	if address == "" {
 		address = p.Address
 	}
 	filter := `filter: {address: {equalTo: "` + address + `"}}`
-	return p.queryUserInfos(1, "", filter)
+	page, err := p.queryUserInfos(1, "", filter)
+	if err != nil {
+		return nil, err
+	}
+	return page.FirstObject(), nil
 }
 
-func (p *Poster) QueryUsersByName(name string, pageSize int, afterCursor string) (string, error) {
+func (p *Poster) QueryUsersByName(name string, pageSize int, afterCursor string) (*UserPage, error) {
 	filter := `filter: {name: {likeInsensitive: "%` + name + `%"}}`
 	return p.queryUserInfos(pageSize, afterCursor, filter)
 }
 
-func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string) (string, error) {
+func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string) (*UserPage, error) {
 	queryString := fmt.Sprintf(`
 	query UserInfos($first: Int) {
 		allSuiAddressNames(
@@ -51,8 +55,8 @@ func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string)
 	var out rawUserPage
 	err := p.makeQueryOut(&query, "allSuiAddressNames", &out)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return out.MapToUserPage().JsonString()
+	return out.MapToUserPage(), nil
 }
