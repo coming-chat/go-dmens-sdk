@@ -41,6 +41,18 @@ func TestQueryUserFollowers(t *testing.T) {
 	t.Log(res)
 }
 
+func TestQueryUserFollowCount(t *testing.T) {
+	poster := DefaultPoster(t)
+
+	res, err := poster.QueryUserFollowCount("")
+	require.Nil(t, err)
+	t.Log(res.JsonString())
+
+	res, err = poster.QueryUserFollowCount("0x3f432b985d6a5bd6f3b8f96a44f9adf272a59bb3")
+	require.Nil(t, err)
+	t.Log(res.JsonString())
+}
+
 func TestQueryTrendUsers(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryTrendUserList(10)

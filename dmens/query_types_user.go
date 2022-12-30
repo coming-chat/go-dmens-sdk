@@ -1,10 +1,5 @@
 package dmens
 
-type User struct {
-	FollowerNumber int    `json:"followerNumber,string"`
-	Owner          string `json:"owner"`
-}
-
 type UserInfo struct {
 	Address string `json:"address"`
 	Avatar  string `json:"avatar"`

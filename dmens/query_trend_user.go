@@ -1,15 +1,19 @@
 package dmens
 
-func (p *Poster) QueryTrendUserList(pageSize int) (string, error) {
+func (p *Poster) QueryTrendUserList(pageSize int) (*UserPage, error) {
 	query := Query{
 		Query: `
 		query trendingCharacters($first: Int, $profileId: String) {
 			trendingCharacters(first: $first, profileId: $profileId) {
-			  nodes {
-				followerNumber
-				owner
-			  }
 			  totalCount
+			  edges {
+				cursor
+				node {
+				  fields
+				  followerNumber
+				  owner
+				}
+			  }
 			}
 		  }
 		`,
@@ -19,11 +23,11 @@ func (p *Poster) QueryTrendUserList(pageSize int) (string, error) {
 		},
 	}
 
-	var out []User
-	err := p.makeQueryOut(&query, "trendingCharacters.nodes", &out)
+	var out rawUserFollowPage
+	err := p.makeQueryOut(&query, "trendingCharacters", &out)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return JsonString(out)
+	return out.MapToUserPage(), nil
 }

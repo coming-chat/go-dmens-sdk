@@ -1,7 +1,7 @@
 package dmens
 
 // @param user If the user is empty, the poster's address will be queried.
-func (p *Poster) QueryUserFollowers(user string, pageSize int, afterCursor string) (string, error) {
+func (p *Poster) QueryUserFollowers(user string, pageSize int, afterCursor string) (*UserPage, error) {
 	if user == "" {
 		user = p.Address
 	}
@@ -42,8 +42,8 @@ func (p *Poster) QueryUserFollowers(user string, pageSize int, afterCursor strin
 	var out rawUserFollowPage
 	err := p.makeQueryOut(&query, "follower", &out)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return out.MapToUserPage().JsonString()
+	return out.MapToUserPage(), nil
 }
