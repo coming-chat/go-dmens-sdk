@@ -17,7 +17,7 @@ func TestQueryTrendNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryTrendNoteList(10, "")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryNoteById(t *testing.T) {
