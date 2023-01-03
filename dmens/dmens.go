@@ -51,7 +51,7 @@ func (p *Poster) DmensPostWithRef(action int, text, refIdentifier string) (*sui.
 	)
 }
 
-func (p *Poster) DmensFollow(addresses base.StringArray) (*sui.Transaction, error) {
+func (p *Poster) DmensFollow(addresses *base.StringArray) (*sui.Transaction, error) {
 	return p.chain.BaseMoveCall(
 		p.Address,
 		p.ContractAddress,
@@ -64,7 +64,7 @@ func (p *Poster) DmensFollow(addresses base.StringArray) (*sui.Transaction, erro
 	)
 }
 
-func (p *Poster) DmensUnfollow(addresses base.StringArray) (*sui.Transaction, error) {
+func (p *Poster) DmensUnfollow(addresses *base.StringArray) (*sui.Transaction, error) {
 	return p.chain.BaseMoveCall(
 		p.Address,
 		p.ContractAddress,

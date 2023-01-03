@@ -5,12 +5,12 @@ import (
 )
 
 type Poster struct {
-	Configuration
-	PosterConfig
+	*Configuration
+	*PosterConfig
 	chain *sui.Chain
 }
 
-func NewPoster(posterConfig PosterConfig, configuration Configuration) (*Poster, error) {
+func NewPoster(posterConfig *PosterConfig, configuration *Configuration) (*Poster, error) {
 	poster := &Poster{
 		Configuration: configuration,
 		chain:         sui.NewChainWithRpcUrl(configuration.FullNodeUrl),

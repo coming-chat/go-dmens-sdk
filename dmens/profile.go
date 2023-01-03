@@ -16,7 +16,7 @@ type Profile struct {
 	Avatar string `json:"avatar"`
 }
 
-func (p *Poster) Register(profile Profile) (*sui.Transaction, error) {
+func (p *Poster) Register(profile *Profile) (*sui.Transaction, error) {
 	profileBytes, err := json.Marshal(profile)
 	if err != nil {
 		return nil, err
