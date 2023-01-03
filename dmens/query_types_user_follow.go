@@ -59,6 +59,7 @@ func (a *rawUserFollowPage) MapToUserPage() *UserPage {
 	return &UserPage{
 		TotalCount:    a.TotalCount,
 		Users:         users,
+		CurrentCount:  len(users),
 		CurrentCursor: a.Edges[length-1].Cursor,
 	}
 }

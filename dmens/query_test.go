@@ -10,7 +10,7 @@ func TestQueryNotesMyFollowed(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryNotesMyFollowed(10, "")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryTrendNoteList(t *testing.T) {
@@ -104,6 +104,13 @@ func TestQueryReplyNoteList(t *testing.T) {
 	res, err := poster.QueryReplyNoteList(noteId, 10, "")
 	require.Nil(t, err)
 	t.Log(res)
+}
+
+func TestQueryAllNoteList(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryAllNoteList(10, "")
+	require.Nil(t, err)
+	t.Log(res.JsonString())
 }
 
 func TestQueryNoteStatusById(t *testing.T) {

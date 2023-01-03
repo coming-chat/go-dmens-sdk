@@ -18,6 +18,13 @@ func (p *Poster) QueryUserNoteList(user string, pageSize int, afterCursor string
 	return p.queryNoteList(pageSize, afterCursor, fieldJson)
 }
 
+// @param pageSize The number of notes per page.
+// @param afterCursor Each page has a cursor, and you need to specify the cursor to get the next page of content, If you want to get the first page of content, pass in empty.
+func (p *Poster) QueryAllNoteList(pageSize int, afterCursor string) (*NotePage, error) {
+	fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v}}}}`, ACTION_POST)
+	return p.queryNoteList(pageSize, afterCursor, fieldJson)
+}
+
 func (p *Poster) queryNoteList(pageSize int, afterCursor string, fieldJson string) (*NotePage, error) {
 	queryString := fmt.Sprintf(`
 	query NoteLists($type: String, $first: Int) {

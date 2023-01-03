@@ -11,6 +11,7 @@ type UserInfo struct {
 type UserPage struct {
 	Users         []UserInfo `json:"users"`
 	CurrentCursor string     `json:"currentCursor"`
+	CurrentCount  int        `json:"currentCount"`
 	TotalCount    int        `json:"totalCount"`
 }
 
@@ -36,6 +37,7 @@ func (a *rawUserPage) MapToUserPage() *UserPage {
 	return &UserPage{
 		TotalCount:    a.TotalCount,
 		Users:         users,
+		CurrentCount:  len(users),
 		CurrentCursor: a.Edges[length-1].Cursor,
 	}
 }

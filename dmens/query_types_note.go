@@ -13,6 +13,7 @@ type Note struct {
 type NotePage struct {
 	Notes         []Note `json:"notes"`
 	CurrentCursor string `json:"currentCursor"`
+	CurrentCount  int    `json:"currentCount"`
 	TotalCount    int    `json:"totalCount"`
 }
 
@@ -92,6 +93,7 @@ func (a *rawNotePage) MapToNotePage() *NotePage {
 	return &NotePage{
 		TotalCount:    a.TotalCount,
 		Notes:         notes,
+		CurrentCount:  len(notes),
 		CurrentCursor: a.Edges[length-1].Cursor,
 	}
 }
