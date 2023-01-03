@@ -1,5 +1,7 @@
 package dmens
 
+import "github.com/coming-chat/wallet-SDK/core/base"
+
 type Note struct {
 	CreateTime string `json:"createTime"`
 	NoteId     string `json:"noteId"`
@@ -10,11 +12,43 @@ type Note struct {
 	RefId  string     `json:"refId"`
 }
 
+func (n *Note) JsonString() (string, error) {
+	return JsonString(n)
+}
+
+func (n *Note) AsAny() *base.Any {
+	return &base.Any{Value: n}
+}
+
+func AsNote(any *base.Any) *Note {
+	if res, ok := any.Value.(*Note); ok {
+		return res
+	}
+	return nil
+}
+
 type NotePage struct {
 	Notes         []Note `json:"notes"`
 	CurrentCursor string `json:"currentCursor"`
 	CurrentCount  int    `json:"currentCount"`
 	TotalCount    int    `json:"totalCount"`
+
+	array *base.AnyArray
+}
+
+func (p *NotePage) JsonString() (string, error) {
+	return JsonString(p)
+}
+
+func (p *NotePage) NoteArray() *base.AnyArray {
+	if p.array == nil {
+		a := make([]any, len(p.Notes))
+		for _, n := range p.Notes {
+			a = append(a, n)
+		}
+		p.array = &base.AnyArray{Values: a}
+	}
+	return p.array
 }
 
 type rawFieldsId struct {
@@ -103,12 +137,4 @@ func (a *rawNotePage) FirstObject() *rawNote {
 		return nil
 	}
 	return &a.Edges[0].Node
-}
-
-func (n *Note) JsonString() (string, error) {
-	return JsonString(n)
-}
-
-func (n *NotePage) JsonString() (string, error) {
-	return JsonString(n)
 }

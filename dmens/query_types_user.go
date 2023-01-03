@@ -1,5 +1,7 @@
 package dmens
 
+import "github.com/coming-chat/wallet-SDK/core/base"
+
 type UserInfo struct {
 	Address string `json:"address"`
 	Avatar  string `json:"avatar"`
@@ -8,11 +10,50 @@ type UserInfo struct {
 	NodeId  string `json:"nodeId"`
 }
 
+func (u *UserInfo) JsonString() (string, error) {
+	return JsonString(u)
+}
+
+func (u *UserInfo) AsAny() *base.Any {
+	return &base.Any{Value: u}
+}
+
+func AsUserInfo(a *base.Any) *UserInfo {
+	if res, ok := a.Value.(*UserInfo); ok {
+		return res
+	}
+	return nil
+}
+
 type UserPage struct {
 	Users         []UserInfo `json:"users"`
 	CurrentCursor string     `json:"currentCursor"`
 	CurrentCount  int        `json:"currentCount"`
 	TotalCount    int        `json:"totalCount"`
+
+	array *base.AnyArray
+}
+
+func (n *UserPage) JsonString() (string, error) {
+	return JsonString(n)
+}
+
+func (n *UserPage) FirstObject() *UserInfo {
+	if len(n.Users) <= 0 {
+		return nil
+	}
+	return &n.Users[0]
+}
+
+func (p *UserPage) UserArray() *base.AnyArray {
+	if p.array == nil {
+		a := make([]any, len(p.Users))
+		for _, n := range p.Users {
+			a = append(a, n)
+		}
+		p.array = &base.AnyArray{Values: a}
+	}
+	return p.array
 }
 
 type rawUserPage struct {
@@ -40,19 +81,4 @@ func (a *rawUserPage) MapToUserPage() *UserPage {
 		CurrentCount:  len(users),
 		CurrentCursor: a.Edges[length-1].Cursor,
 	}
-}
-
-func (n *UserInfo) JsonString() (string, error) {
-	return JsonString(n)
-}
-
-func (n *UserPage) JsonString() (string, error) {
-	return JsonString(n)
-}
-
-func (n *UserPage) FirstObject() *UserInfo {
-	if len(n.Users) <= 0 {
-		return nil
-	}
-	return &n.Users[0]
 }
