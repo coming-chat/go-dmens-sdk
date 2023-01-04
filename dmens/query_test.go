@@ -24,7 +24,7 @@ func TestQueryNoteById(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryNoteById("0xc4dbf29b5513f7695d6370e094c5ad03fb44acc2")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryUserFollowing(t *testing.T) {

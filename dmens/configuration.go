@@ -22,6 +22,10 @@ type PosterConfig struct {
 	followsId    string
 }
 
+func NewPosterConfig(address string) *PosterConfig {
+	return &PosterConfig{Address: address}
+}
+
 var (
 	MainnetConfig = &Configuration{
 		Name:        "mainnet",

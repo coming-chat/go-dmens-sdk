@@ -47,57 +47,86 @@ func (p *Poster) QueryNoteStatusById(noteId string, viewer string) (*NoteStatus,
 	`
 	type action struct {
 		queryString string
-		action      func(status *NoteStatus, count int)
+		execute     func(status *NoteStatus, count int)
 	}
-	actions := map[string]action{
-		"replyCount": {
+	actions := []interface{}{
+		&action{
 			queryString: fmt.Sprintf(queryFormat, ACTION_REPLY, ""),
-			action: func(status *NoteStatus, count int) {
+			execute: func(status *NoteStatus, count int) {
 				status.ReplyCount = count
 			},
 		},
-		"repostCount": {
+		&action{
 			queryString: fmt.Sprintf(queryFormat, ACTION_REPOST, ""),
-			action: func(status *NoteStatus, count int) {
+			execute: func(status *NoteStatus, count int) {
 				status.RepostCount = count
 			},
 		},
-		"isPosted": {
+		&action{
 			queryString: fmt.Sprintf(queryFormat, ACTION_REPOST, `, poster: "`+viewer+`"`),
-			action: func(status *NoteStatus, count int) {
+			execute: func(status *NoteStatus, count int) {
 				status.IsReposted = count > 0
 			},
 		},
-		"likeCount": {
+		&action{
 			queryString: fmt.Sprintf(queryFormat, ACTION_LIKE, ""),
-			action: func(status *NoteStatus, count int) {
+			execute: func(status *NoteStatus, count int) {
 				status.LikeCount = count
 			},
 		},
-		"isLiked": {
+		&action{
 			queryString: fmt.Sprintf(queryFormat, ACTION_LIKE, `, poster: "`+viewer+`"`),
-			action: func(status *NoteStatus, count int) {
+			execute: func(status *NoteStatus, count int) {
 				status.IsLiked = count > 0
 			},
 		},
 	}
-	actionKeys := []string{"replyCount", "repostCount", "likeCount", "isPosted", "isLiked"}
 
-	_, err := base.MapListConcurrentStringToString(actionKeys, func(key string) (string, error) {
-		action := actions[key]
-
+	_, err := base.MapListConcurrent(actions, 5, func(i interface{}) (interface{}, error) {
+		action, ok := i.(*action)
+		if !ok {
+			return i, nil
+		}
 		query := Query{Query: action.queryString}
 		var count int
 		err := p.makeQueryOut(&query, "allSuiObjects.totalCount", &count)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		action.action(res, count)
-		return "", nil
+		action.execute(res, count)
+		return i, nil
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	return res, nil
+}
+
+// 批量查询 page 中所有 note 的状态，数据会直接同步到 page 中每一个 note 对象中
+// @param viewer the note's viewer, if the viewer is empty, the poster's address will be queried.
+func (p *Poster) BatchQueryNoteStatus(page *NotePage, viewer string) error {
+	if len(page.Notes) == 0 {
+		return nil
+	}
+	if viewer == "" {
+		viewer = p.Address
+	}
+	notesList := make([]interface{}, len(page.Notes))
+	for idx, n := range page.Notes {
+		notesList[idx] = n
+	}
+	_, err := base.MapListConcurrent(notesList, 5, func(i interface{}) (interface{}, error) {
+		note, ok := i.(*Note)
+		if !ok {
+			return i, nil
+		}
+		status, err := p.QueryNoteStatusById(note.NoteId, viewer)
+		if err != nil {
+			return nil, err
+		}
+		note.Status = status
+		return i, nil
+	})
+	return err
 }

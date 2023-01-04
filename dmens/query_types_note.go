@@ -1,15 +1,21 @@
 package dmens
 
-import "github.com/coming-chat/wallet-SDK/core/base"
+import (
+	"time"
+
+	"github.com/coming-chat/wallet-SDK/core/base"
+)
 
 type Note struct {
-	CreateTime string `json:"createTime"`
+	CreateTime int64  `json:"createTime"`
 	NoteId     string `json:"noteId"`
 
 	Action NoteAction `json:"action"`
 	Text   string     `json:"text"`
 	Poster string     `json:"poster"`
 	RefId  string     `json:"refId"`
+
+	Status *NoteStatus `json:"status"`
 }
 
 func (n *Note) JsonString() (string, error) {
@@ -28,12 +34,12 @@ func AsNote(any *base.Any) *Note {
 }
 
 type NotePage struct {
-	Notes         []Note `json:"notes"`
-	CurrentCursor string `json:"currentCursor"`
-	CurrentCount  int    `json:"currentCount"`
-	TotalCount    int    `json:"totalCount"`
+	Notes         []*Note `json:"notes"`
+	CurrentCursor string  `json:"currentCursor"`
+	CurrentCount  int     `json:"currentCount"`
+	TotalCount    int     `json:"totalCount"`
 
-	array *base.AnyArray
+	notesArray *base.AnyArray
 }
 
 func (p *NotePage) JsonString() (string, error) {
@@ -41,14 +47,14 @@ func (p *NotePage) JsonString() (string, error) {
 }
 
 func (p *NotePage) NoteArray() *base.AnyArray {
-	if p.array == nil {
+	if p.notesArray == nil {
 		a := make([]any, len(p.Notes))
 		for _, n := range p.Notes {
 			a = append(a, n)
 		}
-		p.array = &base.AnyArray{Values: a}
+		p.notesArray = &base.AnyArray{Values: a}
 	}
-	return p.array
+	return p.notesArray
 }
 
 type rawFieldsId struct {
@@ -102,9 +108,14 @@ type rawNotePage struct {
 }
 
 func (a *rawNote) MapToNote() *Note {
+	var timestamp int64 = 0
+	t, err := time.Parse("2006-01-02T15:04:05.999999", a.CreateTime)
+	if err == nil {
+		timestamp = t.Unix()
+	}
 	fields := a.Fields.Value.Fields
 	return &Note{
-		CreateTime: a.CreateTime,
+		CreateTime: timestamp,
 		NoteId:     a.ObjectId,
 		Action:     fields.Action,
 		Text:       fields.Text,
@@ -113,23 +124,28 @@ func (a *rawNote) MapToNote() *Note {
 	}
 }
 
-func (a *rawNotePage) MapToNotePage() *NotePage {
+// @param poster If you need to query the status of notes in batches, you need to provide the poster.
+func (a *rawNotePage) MapToNotePage(poster *Poster) *NotePage {
 	length := len(a.Edges)
 	if length == 0 {
 		return &NotePage{
 			TotalCount: a.TotalCount,
 		}
 	}
-	notes := make([]Note, 0)
+	notes := make([]*Note, 0)
 	for _, n := range a.Edges {
-		notes = append(notes, *n.Node.MapToNote())
+		notes = append(notes, n.Node.MapToNote())
 	}
-	return &NotePage{
+	page := &NotePage{
 		TotalCount:    a.TotalCount,
 		Notes:         notes,
 		CurrentCount:  len(notes),
 		CurrentCursor: a.Edges[length-1].Cursor,
 	}
+	if poster != nil {
+		_ = poster.BatchQueryNoteStatus(page, "")
+	}
+	return page
 }
 
 func (a *rawNotePage) FirstObject() *rawNote {

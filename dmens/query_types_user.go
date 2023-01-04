@@ -31,7 +31,7 @@ type UserPage struct {
 	CurrentCount  int        `json:"currentCount"`
 	TotalCount    int        `json:"totalCount"`
 
-	array *base.AnyArray
+	usersArray *base.AnyArray
 }
 
 func (n *UserPage) JsonString() (string, error) {
@@ -46,14 +46,14 @@ func (n *UserPage) FirstObject() *UserInfo {
 }
 
 func (p *UserPage) UserArray() *base.AnyArray {
-	if p.array == nil {
+	if p.usersArray == nil {
 		a := make([]any, len(p.Users))
 		for _, n := range p.Users {
 			a = append(a, n)
 		}
-		p.array = &base.AnyArray{Values: a}
+		p.usersArray = &base.AnyArray{Values: a}
 	}
-	return p.array
+	return p.usersArray
 }
 
 type rawUserPage struct {

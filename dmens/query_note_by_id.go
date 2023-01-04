@@ -40,5 +40,7 @@ func (p *Poster) QueryNoteById(noteId string) (*Note, error) {
 	if err != nil {
 		return nil, err
 	}
-	return out.FirstObject().MapToNote(), nil
+	note := out.FirstObject().MapToNote()
+	note.Status, _ = p.QueryNoteStatusById(note.NoteId, "")
+	return note, nil
 }

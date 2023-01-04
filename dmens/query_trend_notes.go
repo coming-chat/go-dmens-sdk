@@ -34,5 +34,5 @@ func (p *Poster) QueryTrendNoteList(pageSize int, afterCursor string) (*NotePage
 	if err != nil {
 		return nil, err
 	}
-	return out.MapToNotePage(), nil
+	return out.MapToNotePage(p), nil
 }
