@@ -21,7 +21,10 @@ func NewPoster(posterConfig *PosterConfig, configuration *Configuration) (*Poste
 }
 
 func (p *Poster) IsRegister() bool {
-	if p.DmensNftId == "" {
+	if p.DmensNftId != "" {
+		return true
+	}
+	if _ = p.FetchDmensObjecId(); p.DmensNftId == "" {
 		return false
 	}
 	return true
