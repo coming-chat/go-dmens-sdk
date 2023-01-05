@@ -4,7 +4,7 @@ func (p *Poster) QueryDmensGlobalConfig() *Query {
 	return &Query{
 		Query: `
 		query DmensGlobalConfig {
-			allDmensGlobalConfigs{
+			allSuiDmensGlobalConfigs{
 			  	nodes {
 					chainName
       				contractAddress
