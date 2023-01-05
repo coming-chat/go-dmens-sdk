@@ -5,13 +5,13 @@ const (
 )
 
 type Configuration struct {
-	Name            string
-	FullNodeUrl     string
-	GraphqlUrl      string
-	ContractAddress string
-	GlobalProfileId string
-	// ProfileTableId string
-	IsMainNet bool
+	Name                 string
+	FullNodeUrl          string
+	GraphqlUrl           string
+	ContractAddress      string
+	GlobalProfileId      string
+	GlobalProfileTableId string
+	IsMainNet            bool
 }
 
 type PosterConfig struct {
