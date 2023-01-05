@@ -27,7 +27,7 @@ func (p *Poster) FetchDmensGlobalConfig() error {
 		GlobalProfileTableId string `json:"globalProfileTableId"`
 	}{}
 	query := p.QueryDmensGlobalConfig()
-	err := p.makeQueryOut(query, "allDmensGlobalConfigs.nodes", &out)
+	err := p.makeQueryOut(query, "allSuiDmensGlobalConfigs.nodes", &out)
 	if err != nil {
 		return err
 	}

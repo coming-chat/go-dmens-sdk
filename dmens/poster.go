@@ -24,6 +24,13 @@ func NewPoster(posterConfig *PosterConfig, configuration *Configuration) (*Poste
 	return poster, nil
 }
 
+func NewPosterWithAddress(posterAddress string, configuration *Configuration) (*Poster, error) {
+	posterConfig := &PosterConfig{
+		Address: posterAddress,
+	}
+	return NewPoster(posterConfig, configuration)
+}
+
 func (p *Poster) IsRegister() bool {
 	if p.DmensNftId != "" {
 		return true
