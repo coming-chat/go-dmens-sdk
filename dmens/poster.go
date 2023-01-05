@@ -13,9 +13,13 @@ type Poster struct {
 func NewPoster(posterConfig *PosterConfig, configuration *Configuration) (*Poster, error) {
 	poster := &Poster{
 		Configuration: configuration,
-		chain:         sui.NewChainWithRpcUrl(configuration.FullNodeUrl),
 		PosterConfig:  posterConfig,
 	}
+	err := poster.FetchDmensGlobalConfig()
+	if err != nil {
+		return nil, err
+	}
+	poster.chain = sui.NewChainWithRpcUrl(poster.FullNodeUrl)
 	_ = poster.FetchDmensObjecId()
 	return poster, nil
 }
