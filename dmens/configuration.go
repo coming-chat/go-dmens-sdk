@@ -28,23 +28,18 @@ func NewPosterConfig(address string) *PosterConfig {
 
 var (
 	MainnetConfig = &Configuration{
-		Name:        "mainnet",
-		FullNodeUrl: "https://fullnode.mainnet.sui.io:443",
-		IsMainNet:   true,
+		Name:       "mainnet",
+		IsMainNet:  true,
+		GraphqlUrl: "https://graphql.coming.chat/sui-mainnet/graphql",
 	}
 
 	TestnetConfig = &Configuration{
-		Name:            "testnet",
-		FullNodeUrl:     "https://fullnode.testnet.sui.io:443",
-		GraphqlUrl:      "https://graphql.coming.chat/sui-testnet/graphql",
-		ContractAddress: "0x7a3ff93380660c4fa3ea8df8de13acb2cadf7052",
+		Name:       "testnet",
+		GraphqlUrl: "https://graphql.coming.chat/sui-testnet/graphql",
 	}
 
 	DevnetConfig = &Configuration{
-		Name:            "devnet",
-		FullNodeUrl:     "https://fullnode.devnet.sui.io:443",
-		GraphqlUrl:      "https://graphql.coming.chat/sui-devnet/graphql",
-		ContractAddress: "0x307772d54928d34b9a45bac2f436db7e3e33fe5e",
-		GlobalProfileId: "0x6a0402a6c37fb14446683ff13bc97d1ee0474ac2",
+		Name:       "devnet",
+		GraphqlUrl: "https://graphql.coming.chat/sui-devnet/graphql",
 	}
 )
