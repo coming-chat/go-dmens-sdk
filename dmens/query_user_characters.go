@@ -30,7 +30,7 @@ func (p *Poster) queryUserCharacter(user string) (*UserInfo, error) {
 		`,
 		Variables: map[string]interface{}{
 			"owner": map[string]string{
-				"ObjectOwner": p.GlobalProfileId,
+				"ObjectOwner": p.GlobalProfileTableId,
 			},
 			"name": map[string]string{
 				"name": user,

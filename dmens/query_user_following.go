@@ -33,7 +33,7 @@ func (p *Poster) QueryUserFollowing(user string, pageSize int, afterCursor strin
 		Variables: map[string]interface{}{
 			"dmensMetaObjectType": p.dmensMetaObjectType(),
 			"objectOwner":         user,
-			"profileId":           p.GlobalProfileId,
+			"profileId":           p.GlobalProfileTableId,
 			"first":               pageSize,
 		},
 		Cursor: afterCursor,

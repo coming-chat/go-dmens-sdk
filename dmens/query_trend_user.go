@@ -19,7 +19,7 @@ func (p *Poster) QueryTrendUserList(pageSize int) (*UserPage, error) {
 		`,
 		Variables: map[string]interface{}{
 			"first":     pageSize,
-			"profileId": p.GlobalProfileId,
+			"profileId": p.GlobalProfileTableId,
 		},
 	}
 
