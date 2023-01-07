@@ -22,7 +22,7 @@ func TestQueryTrendNoteList(t *testing.T) {
 
 func TestQueryNoteById(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryNoteById("0xc4dbf29b5513f7695d6370e094c5ad03fb44acc2")
+	res, err := poster.QueryNoteById("0x9013af3c543853805ce1532b76aac5ea1e25b368")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
@@ -121,4 +121,11 @@ func TestQueryNoteStatusById(t *testing.T) {
 	res, err := poster.QueryNoteStatusById(noteId, viewer)
 	require.Nil(t, err)
 	t.Log(res)
+}
+
+func TestIsMyFollowing(t *testing.T) {
+	poster := DefaultPoster(t)
+	isFollow, err := poster.IsMyFollowing("0x7c1b34834f58064743252260eaefa9ce443b24ed")
+	require.Nil(t, err)
+	t.Log(isFollow)
 }
