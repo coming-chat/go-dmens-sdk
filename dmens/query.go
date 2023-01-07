@@ -84,3 +84,9 @@ func (p *Poster) addressOwner() map[string]string {
 		"AddressOwner": p.Address,
 	}
 }
+
+func (p *Poster) followsObjectOwner() map[string]string {
+	return map[string]string{
+		"ObjectOwner": p.followsId,
+	}
+}
