@@ -34,26 +34,26 @@ type UserPage struct {
 	usersArray *base.AnyArray
 }
 
-func (n *UserPage) JsonString() (string, error) {
-	return JsonString(n)
+func (u *UserPage) JsonString() (string, error) {
+	return JsonString(u)
 }
 
-func (n *UserPage) FirstObject() *UserInfo {
-	if len(n.Users) <= 0 {
+func (u *UserPage) FirstObject() *UserInfo {
+	if len(u.Users) <= 0 {
 		return nil
 	}
-	return &n.Users[0]
+	return &u.Users[0]
 }
 
-func (p *UserPage) UserArray() *base.AnyArray {
-	if p.usersArray == nil {
-		a := make([]any, len(p.Users))
-		for _, n := range p.Users {
+func (u *UserPage) UserArray() *base.AnyArray {
+	if u.usersArray == nil {
+		a := make([]any, len(u.Users))
+		for _, n := range u.Users {
 			a = append(a, n)
 		}
-		p.usersArray = &base.AnyArray{Values: a}
+		u.usersArray = &base.AnyArray{Values: a}
 	}
-	return p.usersArray
+	return u.usersArray
 }
 
 type rawUserPage struct {

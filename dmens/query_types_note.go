@@ -71,7 +71,7 @@ type rawNote struct {
 		// rawFieldsId
 		// Name  string `json:"name"`
 		Value struct {
-			// Type   string `json:"type"`
+			// Type string `json:"type"`
 			Fields struct {
 				Action NoteAction `json:"action"`
 				Text   string     `json:"text"`
@@ -124,6 +124,7 @@ func (a *rawNote) MapToNote() *Note {
 	}
 }
 
+// MapToNotePage
 // @param poster If you need to query the status of notes in batches, you need to provide the poster.
 func (a *rawNotePage) MapToNotePage(poster *Poster) *NotePage {
 	length := len(a.Edges)

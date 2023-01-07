@@ -28,7 +28,7 @@ func (p *Poster) DmensPost(text string) (*sui.Transaction, error) {
 		functionPost,
 		[]any{
 			p.DmensNftId,
-			appIdForComingchatApp,
+			appIdForComingChatApp,
 			actionPost,
 			text,
 		},
@@ -43,7 +43,7 @@ func (p *Poster) DmensPostWithRef(action int, text, refIdentifier string) (*sui.
 		functionPostRef,
 		[]any{
 			p.DmensNftId,
-			appIdForComingchatApp,
+			appIdForComingChatApp,
 			action,
 			text,
 			refIdentifier,

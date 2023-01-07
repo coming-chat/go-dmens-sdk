@@ -41,7 +41,7 @@ type rawUserFollowPage struct {
 
 func (u *rawUserFollow) MapToUserInfo() *UserInfo {
 	res := &UserInfo{Address: u.Fields.Name}
-	json.Unmarshal(u.Fields.Value, res)
+	_ = json.Unmarshal(u.Fields.Value, res)
 	return res
 }
 

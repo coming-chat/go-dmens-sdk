@@ -9,6 +9,7 @@ func (p *Poster) QueryReplyNoteList(noteId string, pageSize int, afterCursor str
 	return p.queryNoteList(pageSize, afterCursor, fieldJson)
 }
 
+// QueryUserNoteList
 // @param user If the user is empty, the poster's address will be queried.
 func (p *Poster) QueryUserNoteList(user string, pageSize int, afterCursor string) (*NotePage, error) {
 	if user == "" {
@@ -18,6 +19,7 @@ func (p *Poster) QueryUserNoteList(user string, pageSize int, afterCursor string
 	return p.queryNoteList(pageSize, afterCursor, fieldJson)
 }
 
+// QueryAllNoteList
 // @param pageSize The number of notes per page.
 // @param afterCursor Each page has a cursor, and you need to specify the cursor to get the next page of content, If you want to get the first page of content, pass in empty.
 func (p *Poster) QueryAllNoteList(pageSize int, afterCursor string) (*NotePage, error) {

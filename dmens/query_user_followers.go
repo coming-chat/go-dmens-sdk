@@ -1,5 +1,6 @@
 package dmens
 
+// QueryUserFollowers
 // @param user If the user is empty, the poster's address will be queried.
 func (p *Poster) QueryUserFollowers(user string, pageSize int, afterCursor string) (*UserPage, error) {
 	if user == "" {

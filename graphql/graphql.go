@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-type GraphQLError struct {
+type Error struct {
 	Locations []struct {
 		Line   int `json:"line"`
 		Column int `json:"column"`
@@ -17,7 +17,7 @@ type GraphQLError struct {
 	Message string `json:"message"`
 }
 
-func (e GraphQLError) Error() string {
+func (e Error) Error() string {
 	if len(e.Locations) > 0 {
 		return fmt.Sprintf("line %v: %v", e.Locations[0].Line, e.Message)
 	} else {
@@ -25,8 +25,8 @@ func (e GraphQLError) Error() string {
 	}
 }
 
-type GraphQLResponse struct {
-	Errors []GraphQLError  `json:"errors,omitempty"`
+type Response struct {
+	Errors []Error         `json:"errors,omitempty"`
 	Data   json.RawMessage `json:"data,omitempty"`
 }
 
@@ -60,7 +60,7 @@ func FetchGraphQL(query, operationName string, variables map[string]interface{},
 	if err != nil {
 		return err
 	}
-	resObject := GraphQLResponse{}
+	resObject := Response{}
 	err = json.Unmarshal(respBody, &resObject)
 	if err != nil {
 		return err
@@ -73,7 +73,8 @@ func FetchGraphQL(query, operationName string, variables map[string]interface{},
 	return json.Unmarshal(resObject.Data, out)
 }
 
-// If query has only one statement, `operationName` can be left unspecified
+// FetchGraphQLSample
+// If the query has only one statement, `operationName` can be left unspecified
 func FetchGraphQLSample(query string, graphUrl string, out interface{}) error {
 	return FetchGraphQL(query, "", nil, graphUrl, out)
 }

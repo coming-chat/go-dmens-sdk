@@ -1,5 +1,6 @@
 package dmens
 
+// QueryUserFollowing
 // @param user If the user is empty, the poster's address will be queried.
 func (p *Poster) QueryUserFollowing(user string, pageSize int, afterCursor string) (*UserPage, error) {
 	if user == "" {
@@ -48,6 +49,7 @@ func (p *Poster) QueryUserFollowing(user string, pageSize int, afterCursor strin
 	return out.MapToUserPage(), nil
 }
 
+// QueryUserFollowCount
 // @param user If the user is empty, the poster's address will be queried.
 func (p *Poster) QueryUserFollowCount(user string) (*UserFollowCount, error) {
 	if user == "" {

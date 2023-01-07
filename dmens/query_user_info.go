@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// QueryUserInfoByAddress
 // @param address If the address is empty, the poster's address will be queried.
 func (p *Poster) QueryUserInfoByAddress(address string) (*UserInfo, error) {
 	if address == "" {

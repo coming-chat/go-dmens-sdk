@@ -60,7 +60,7 @@ func (p *Poster) makeQueryOut(q *Query, path string, out interface{}) error {
 				continue
 			}
 		}
-		return fmt.Errorf("Response parsing error, path '%v' not found.", path)
+		return fmt.Errorf("response parsing error, path '%v' not found", path)
 	}
 
 	data, err := json.Marshal(oo)

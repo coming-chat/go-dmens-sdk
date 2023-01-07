@@ -20,6 +20,7 @@ type NoteStatus struct {
 	IsLiked bool `json:"isLiked"`
 }
 
+// QueryNoteStatusById
 // @param noteId the note's id
 // @param viewer the note's viewer, if the viewer is empty, the poster's address will be queried.
 func (p *Poster) QueryNoteStatusById(noteId string, viewer string) (*NoteStatus, error) {
@@ -103,6 +104,7 @@ func (p *Poster) QueryNoteStatusById(noteId string, viewer string) (*NoteStatus,
 	return res, nil
 }
 
+// BatchQueryNoteStatus
 // 批量查询 page 中所有 note 的状态，数据会直接同步到 page 中每一个 note 对象中
 // @param viewer the note's viewer, if the viewer is empty, the poster's address will be queried.
 func (p *Poster) BatchQueryNoteStatus(page *NotePage, viewer string) error {

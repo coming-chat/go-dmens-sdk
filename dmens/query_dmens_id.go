@@ -27,13 +27,13 @@ func (p *Poster) FetchDmensObjecId() error {
 	type Field struct {
 		Fields rawFieldsId `json:"fields"`
 	}
-	var out = []struct {
+	var out []struct {
 		ObjectId string `json:"objectId"`
 		Fields   struct {
 			Follows    Field `json:"follows"`
 			DmensTable Field `json:"dmens_table"`
 		} `json:"fields"`
-	}{}
+	}
 	query := p.QueryDmensObjectId()
 	err := p.makeQueryOut(query, "allSuiObjects.nodes", &out)
 	if err != nil {
