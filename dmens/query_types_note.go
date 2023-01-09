@@ -30,6 +30,9 @@ func AsNote(any *base.Any) *Note {
 	if res, ok := any.Value.(*Note); ok {
 		return res
 	}
+	if res, ok := any.Value.(Note); ok {
+		return &res
+	}
 	return nil
 }
 
@@ -49,8 +52,8 @@ func (p *NotePage) JsonString() (string, error) {
 func (p *NotePage) NoteArray() *base.AnyArray {
 	if p.notesArray == nil {
 		a := make([]any, len(p.Notes))
-		for _, n := range p.Notes {
-			a = append(a, n)
+		for idx, n := range p.Notes {
+			a[idx] = n
 		}
 		p.notesArray = &base.AnyArray{Values: a}
 	}

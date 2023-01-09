@@ -22,6 +22,9 @@ func AsUserInfo(a *base.Any) *UserInfo {
 	if res, ok := a.Value.(*UserInfo); ok {
 		return res
 	}
+	if res, ok := a.Value.(UserInfo); ok {
+		return &res
+	}
 	return nil
 }
 
@@ -48,8 +51,8 @@ func (u *UserPage) FirstObject() *UserInfo {
 func (u *UserPage) UserArray() *base.AnyArray {
 	if u.usersArray == nil {
 		a := make([]any, len(u.Users))
-		for _, n := range u.Users {
-			a = append(a, n)
+		for idx, n := range u.Users {
+			a[idx] = n
 		}
 		u.usersArray = &base.AnyArray{Values: a}
 	}

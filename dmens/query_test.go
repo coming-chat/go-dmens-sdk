@@ -129,3 +129,29 @@ func TestIsMyFollowing(t *testing.T) {
 	require.Nil(t, err)
 	t.Log(isFollow)
 }
+
+func TestAsUserInfo(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryUsersByName("g", 10, "")
+	require.Nil(t, err)
+
+	userArray := res.UserArray()
+	for i := 0; i < res.CurrentCount; i++ {
+		userAny := userArray.ValueOf(i)
+		user := AsUserInfo(userAny)
+		t.Log(user.JsonString())
+	}
+}
+
+func TestAsNote(t *testing.T) {
+	poster := DefaultPoster(t)
+	res, err := poster.QueryTrendNoteList(10, "")
+	require.Nil(t, err)
+
+	noteArray := res.NoteArray()
+	for i := 0; i < res.CurrentCount; i++ {
+		noteAny := noteArray.ValueOf(i)
+		note := AsNote(noteAny)
+		t.Log(note.JsonString())
+	}
+}
