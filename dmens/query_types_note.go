@@ -56,6 +56,71 @@ func (p *NotePage) NoteArray() *base.AnyArray {
 	return p.anyArray
 }
 
+type RepostNote struct {
+	*Note        // origin note info
+	Repost *Note // repost note info
+}
+
+func (p *RepostNote) JsonString() (string, error) {
+	return JsonString(p)
+}
+
+func (n *RepostNote) AsAny() *base.Any {
+	return &base.Any{Value: n}
+}
+
+func AsRepostNote(any *base.Any) *RepostNote {
+	if res, ok := any.Value.(*RepostNote); ok {
+		return res
+	}
+	if res, ok := any.Value.(RepostNote); ok {
+		return &res
+	}
+	return nil
+}
+
+type RepostNotePage struct {
+	*Pageable
+	Notes []*RepostNote `json:"notes"`
+}
+
+func (p *RepostNotePage) JsonString() (string, error) {
+	return JsonString(p)
+}
+
+func (p *RepostNotePage) NoteArray() *base.AnyArray {
+	if p.anyArray == nil {
+		a := make([]any, len(p.Notes))
+		for idx, n := range p.Notes {
+			a[idx] = n
+		}
+		p.anyArray = &base.AnyArray{Values: a}
+	}
+	return p.anyArray
+}
+
+// 合并完成后，originPage 的 notes 会被清空
+func combineRepostPage(repostPage, originPage *NotePage) *RepostNotePage {
+	notes := make([]*RepostNote, len(repostPage.Notes))
+	for idx, note := range repostPage.Notes {
+		notes[idx] = &RepostNote{
+			Repost: note,
+		}
+		// 在 originPage 中找到对应的 note
+		for oidx, originNote := range originPage.Notes {
+			if originNote.NoteId == note.RefId {
+				notes[idx].Note = originNote
+				originPage.Notes = append(originPage.Notes[:oidx], originPage.Notes[oidx+1:]...)
+				continue
+			}
+		}
+	}
+	return &RepostNotePage{
+		Pageable: repostPage.Pageable,
+		Notes:    notes,
+	}
+}
+
 func (a *rawNote) MapToNote() *Note {
 	var timestamp int64 = 0
 	t, err := time.Parse("2006-01-02T15:04:05.999999", a.CreateTime)

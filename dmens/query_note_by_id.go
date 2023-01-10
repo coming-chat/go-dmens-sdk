@@ -1,21 +1,33 @@
 package dmens
 
 func (p *Poster) QueryNoteById(noteId string) (*Note, error) {
+	page, err := p.BatchQueryNoteByIds([]string{noteId})
+	if err != nil {
+		return nil, err
+	}
+	if page.CurrentCount <= 0 {
+		return nil, nil
+	}
+	return page.Notes[0], nil
+}
+
+func (p *Poster) BatchQueryNoteByIds(ids []string) (*NotePage, error) {
+	if len(ids) <= 0 {
+		return &NotePage{}, nil
+	}
 	query := Query{
 		Query: `
 		query NoteById(
 			$type: String
-			$noteId: String
+			$noteIds: [String!]
 		  ) {
 			allSuiObjects(
 			  filter: {
 				dataType: { equalTo: "moveObject" }
 				status: { equalTo: "Exists" }
 				type: { equalTo: $type }
-				objectId: { equalTo: $noteId }
+				objectId: { in: $noteIds }
 			  }
-			  orderBy: CREATE_TIME_DESC
-			  first: 10
 			) {
 			  totalCount
 			  edges {
@@ -30,8 +42,8 @@ func (p *Poster) QueryNoteById(noteId string) (*Note, error) {
 		  }
 		`,
 		Variables: map[string]interface{}{
-			"type":   p.dmensObjectType(),
-			"noteId": noteId,
+			"type":    p.dmensObjectType(),
+			"noteIds": ids,
 		},
 	}
 
@@ -40,7 +52,7 @@ func (p *Poster) QueryNoteById(noteId string) (*Note, error) {
 	if err != nil {
 		return nil, err
 	}
-	note := out.FirstObject().MapToNote()
-	note.Status, _ = p.QueryNoteStatusById(note.NoteId, "")
-	return note, nil
+
+	page := out.MapToNotePage(p, len(ids))
+	return page, nil
 }
