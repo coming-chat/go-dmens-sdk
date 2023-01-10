@@ -59,5 +59,5 @@ func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string)
 		return nil, err
 	}
 
-	return out.MapToUserPage(), nil
+	return out.MapToUserPage(pageSize), nil
 }

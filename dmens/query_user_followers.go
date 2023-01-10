@@ -46,5 +46,5 @@ func (p *Poster) QueryUserFollowers(user string, pageSize int, afterCursor strin
 		return nil, err
 	}
 
-	return out.MapToUserPage(), nil
+	return out.MapToUserPage(pageSize), nil
 }

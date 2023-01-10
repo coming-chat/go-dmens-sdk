@@ -31,14 +31,14 @@ func TestQueryUserFollowing(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryUserFollowing("", 10, "")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryUserFollowers(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryUserFollowers("0x3f432b985d6a5bd6f3b8f96a44f9adf272a59bb3", 10, "")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryUserFollowCount(t *testing.T) {
@@ -57,21 +57,21 @@ func TestQueryTrendUsers(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryTrendUserList(10)
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryUserCharaters(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.queryUserCharacter("")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryUsersByName(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryUsersByName("g", 10, "")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryUserInfoByAddress(t *testing.T) {
@@ -80,19 +80,19 @@ func TestQueryUserInfoByAddress(t *testing.T) {
 	// query default poster's info
 	res, err := poster.QueryUserInfoByAddress("")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 
 	// query specified user's info
 	res, err = poster.QueryUserInfoByAddress("0x111")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryUserNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryUserNoteList("", 10, "")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryReplyNoteList(t *testing.T) {
@@ -103,7 +103,7 @@ func TestQueryReplyNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryReplyNoteList(noteId, 10, "")
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(res.JsonString())
 }
 
 func TestQueryAllNoteList(t *testing.T) {

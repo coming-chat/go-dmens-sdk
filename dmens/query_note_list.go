@@ -70,5 +70,5 @@ func (p *Poster) queryNoteList(pageSize int, afterCursor string, fieldJson strin
 		return nil, err
 	}
 
-	return out.MapToNotePage(p), nil
+	return out.MapToNotePage(p, pageSize), nil
 }

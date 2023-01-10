@@ -49,5 +49,5 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, afterCursor string) (*NotePa
 		return nil, err
 	}
 
-	return out.MapToNotePage(p), nil
+	return out.MapToNotePage(p, pageSize), nil
 }

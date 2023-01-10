@@ -1,6 +1,10 @@
 package dmens
 
-import "github.com/coming-chat/wallet-SDK/core/base"
+import (
+	"encoding/json"
+
+	"github.com/coming-chat/wallet-SDK/core/base"
+)
 
 type UserInfo struct {
 	Address string `json:"address"`
@@ -29,12 +33,8 @@ func AsUserInfo(a *base.Any) *UserInfo {
 }
 
 type UserPage struct {
-	Users         []UserInfo `json:"users"`
-	CurrentCursor string     `json:"currentCursor"`
-	CurrentCount  int        `json:"currentCount"`
-	TotalCount    int        `json:"totalCount"`
-
-	usersArray *base.AnyArray
+	*Pageable
+	Users []*UserInfo `json:"users"`
 }
 
 func (u *UserPage) JsonString() (string, error) {
@@ -45,43 +45,64 @@ func (u *UserPage) FirstObject() *UserInfo {
 	if len(u.Users) <= 0 {
 		return nil
 	}
-	return &u.Users[0]
+	return u.Users[0]
 }
 
 func (u *UserPage) UserArray() *base.AnyArray {
-	if u.usersArray == nil {
+	if u.anyArray == nil {
 		a := make([]any, len(u.Users))
 		for idx, n := range u.Users {
 			a[idx] = n
 		}
-		u.usersArray = &base.AnyArray{Values: a}
+		u.anyArray = &base.AnyArray{Values: a}
 	}
-	return u.usersArray
+	return u.anyArray
 }
 
-type rawUserPage struct {
-	TotalCount int `json:"totalCount,omitempty"`
-	Edges      []struct {
-		Node   UserInfo `json:"node"`
-		Cursor string   `json:"cursor"`
-	} `json:"edges,omitempty"`
+type UserFollowCount struct {
+	User string `json:"user"`
+
+	FollowerCount  int `json:"followerCount"`
+	FollowingCount int `json:"followingCount"`
 }
 
-func (a *rawUserPage) MapToUserPage() *UserPage {
-	length := len(a.Edges)
-	if length == 0 {
-		return &UserPage{
-			TotalCount: a.TotalCount,
-		}
+func (n *UserFollowCount) JsonString() (string, error) {
+	return JsonString(n)
+}
+
+func (a *rawUserPage) MapToUserPage(pageSize int) *UserPage {
+	users := make([]*UserInfo, len(a.Edges))
+	for idx, n := range a.Edges {
+		users[idx] = &n.Node
 	}
-	users := make([]UserInfo, 0)
-	for _, n := range a.Edges {
-		users = append(users, n.Node)
-	}
+	page := a.mapToBasePage(pageSize)
 	return &UserPage{
-		TotalCount:    a.TotalCount,
-		Users:         users,
-		CurrentCount:  len(users),
-		CurrentCursor: a.Edges[length-1].Cursor,
+		Pageable: page,
+		Users:    users,
 	}
+}
+
+func (u *rawUserFollow) MapToUserInfo() *UserInfo {
+	res := &UserInfo{Address: u.Fields.Name}
+	_ = json.Unmarshal(u.Fields.Value, res)
+	return res
+}
+
+func (a *rawUserFollowPage) MapToUserPage(pageSize int) *UserPage {
+	users := make([]*UserInfo, len(a.Edges))
+	for idx, n := range a.Edges {
+		users[idx] = n.Node.MapToUserInfo()
+	}
+	page := a.mapToBasePage(pageSize)
+	return &UserPage{
+		Pageable: page,
+		Users:    users,
+	}
+}
+
+func (a *rawUserFollowPage) FirstObject() *rawUserFollow {
+	if len(a.Edges) <= 0 {
+		return nil
+	}
+	return &a.Edges[0].Node
 }

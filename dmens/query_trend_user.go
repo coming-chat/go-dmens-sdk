@@ -29,5 +29,5 @@ func (p *Poster) QueryTrendUserList(pageSize int) (*UserPage, error) {
 		return nil, err
 	}
 
-	return out.MapToUserPage(), nil
+	return out.MapToUserPage(pageSize), nil
 }

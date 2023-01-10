@@ -37,12 +37,8 @@ func AsNote(any *base.Any) *Note {
 }
 
 type NotePage struct {
-	Notes         []*Note `json:"notes"`
-	CurrentCursor string  `json:"currentCursor"`
-	CurrentCount  int     `json:"currentCount"`
-	TotalCount    int     `json:"totalCount"`
-
-	notesArray *base.AnyArray
+	*Pageable
+	Notes []*Note `json:"notes"`
 }
 
 func (p *NotePage) JsonString() (string, error) {
@@ -50,64 +46,14 @@ func (p *NotePage) JsonString() (string, error) {
 }
 
 func (p *NotePage) NoteArray() *base.AnyArray {
-	if p.notesArray == nil {
+	if p.anyArray == nil {
 		a := make([]any, len(p.Notes))
 		for idx, n := range p.Notes {
 			a[idx] = n
 		}
-		p.notesArray = &base.AnyArray{Values: a}
+		p.anyArray = &base.AnyArray{Values: a}
 	}
-	return p.notesArray
-}
-
-type rawFieldsId struct {
-	Id struct {
-		Id string `json:"id"`
-	} `json:"id"`
-}
-
-type rawNote struct {
-	CreateTime string `json:"createTime,omitempty"`
-	ObjectId   string `json:"objectId,omitempty"`
-
-	Fields *struct {
-		// rawFieldsId
-		// Name  string `json:"name"`
-		Value struct {
-			// Type string `json:"type"`
-			Fields struct {
-				Action NoteAction `json:"action"`
-				Text   string     `json:"text"`
-				Poster string     `json:"poster"`
-				RefId  string     `json:"ref_id"`
-
-				// rawFieldsId
-				// Url    string     `json:"url"`
-				// AppId  int        `json:"app_id"`
-			} `json:"fields"`
-		} `json:"value"`
-	} `json:"fields,omitempty"`
-
-	// Owner      interface{} `json:"owner,omitempty"`
-	// UpdateTime string `json:"updateTime,omitempty"`
-	// Status     string `json:"status,omitempty"`
-	// DataType   string `json:"dataType,omitempty"`
-	// Type       string `json:"type,omitempty"`
-	// NodeId     string `json:"nodeId,omitempty"`
-	// Digest     string `json:"digest,omitempty"`
-	// Version    string `json:"version,omitempty"`
-	// IsUpdate   bool   `json:"isUpdate,omitempty"`
-	// StorageRebate       string `json:"storageRebate,omitempty"`
-	// PreviousTransaction string `json:"previousTransaction,omitempty"`
-	// HasPublicTransfer   bool   `json:"hasPublicTransfer,omitempty"`
-}
-
-type rawNotePage struct {
-	TotalCount int `json:"totalCount,omitempty"`
-	Edges      []struct {
-		Node   rawNote `json:"node"`
-		Cursor string  `json:"cursor"`
-	} `json:"edges,omitempty"`
+	return p.anyArray
 }
 
 func (a *rawNote) MapToNote() *Note {
@@ -129,22 +75,15 @@ func (a *rawNote) MapToNote() *Note {
 
 // MapToNotePage
 // @param poster If you need to query the status of notes in batches, you need to provide the poster.
-func (a *rawNotePage) MapToNotePage(poster *Poster) *NotePage {
-	length := len(a.Edges)
-	if length == 0 {
-		return &NotePage{
-			TotalCount: a.TotalCount,
-		}
+func (a *rawNotePage) MapToNotePage(poster *Poster, pageSize int) *NotePage {
+	notes := make([]*Note, len(a.Edges))
+	for idx, n := range a.Edges {
+		notes[idx] = n.Node.MapToNote()
 	}
-	notes := make([]*Note, 0)
-	for _, n := range a.Edges {
-		notes = append(notes, n.Node.MapToNote())
-	}
+	basePage := a.mapToBasePage(pageSize)
 	page := &NotePage{
-		TotalCount:    a.TotalCount,
-		Notes:         notes,
-		CurrentCount:  len(notes),
-		CurrentCursor: a.Edges[length-1].Cursor,
+		Pageable: basePage,
+		Notes:    notes,
 	}
 	if poster != nil {
 		_ = poster.BatchQueryNoteStatus(page, "")
