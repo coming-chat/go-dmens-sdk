@@ -8,7 +8,7 @@ func (p *Poster) QueryNoteById(noteId string) (*Note, error) {
 	if page.CurrentCount <= 0 {
 		return nil, nil
 	}
-	return page.Notes[0], nil
+	return page.Items[0], nil
 }
 
 func (p *Poster) BatchQueryNoteByIds(ids []string) (*NotePage, error) {

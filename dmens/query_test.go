@@ -154,7 +154,7 @@ func TestAsUserInfo(t *testing.T) {
 	res, err := poster.QueryUsersByName("g", 10, "")
 	require.Nil(t, err)
 
-	userArray := res.UserArray()
+	userArray := res.ItemArray()
 	for i := 0; i < res.CurrentCount; i++ {
 		userAny := userArray.ValueOf(i)
 		user := AsUserInfo(userAny)
@@ -167,7 +167,7 @@ func TestAsNote(t *testing.T) {
 	res, err := poster.QueryTrendNoteList(10, "")
 	require.Nil(t, err)
 
-	noteArray := res.NoteArray()
+	noteArray := res.ItemArray()
 	for i := 0; i < res.CurrentCount; i++ {
 		noteAny := noteArray.ValueOf(i)
 		note := AsNote(noteAny)

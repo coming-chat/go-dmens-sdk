@@ -31,8 +31,8 @@ func (p *Poster) QueryUserRepostList(user string, pageSize int, afterCursor stri
 		return nil, err
 	}
 
-	originNoteIds := make([]string, len(repostPage.Notes))
-	for idx, note := range repostPage.Notes {
+	originNoteIds := make([]string, len(repostPage.Items))
+	for idx, note := range repostPage.Items {
 		originNoteIds[idx] = note.RefId
 	}
 	originNotePage, err := p.BatchQueryNoteByIds(originNoteIds)

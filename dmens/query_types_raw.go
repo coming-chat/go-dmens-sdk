@@ -1,6 +1,9 @@
 package dmens
 
-import "github.com/coming-chat/wallet-SDK/core/base"
+import (
+	"encoding/json"
+	"time"
+)
 
 type rawFieldsId struct {
 	Id struct {
@@ -13,15 +16,6 @@ type rawPageInfo struct {
 	HasNextPage bool   `json:"hasNextPage"`
 	// HasPreviousPage bool `json:"hasPreviousPage"`
 	// StartCursor     string `json:"startCursor"`
-}
-
-type rawPageable[T rawUser | rawNote | rawUserFollow] struct {
-	TotalCount int `json:"totalCount,omitempty"`
-	Edges      []struct {
-		Node   T      `json:"node"`
-		Cursor string `json:"cursor"`
-	} `json:"edges,omitempty"`
-	PageInfo *rawPageInfo `json:"pageInfo,omitempty"`
 }
 
 type rawUser = UserInfo
@@ -62,6 +56,23 @@ type rawNote struct {
 	// HasPublicTransfer   bool   `json:"hasPublicTransfer,omitempty"`
 }
 
+func (a *rawNote) MapToNote() *Note {
+	var timestamp int64 = 0
+	t, err := time.Parse("2006-01-02T15:04:05.999999", a.CreateTime)
+	if err == nil {
+		timestamp = t.Unix()
+	}
+	fields := a.Fields.Value.Fields
+	return &Note{
+		CreateTime: timestamp,
+		NoteId:     a.ObjectId,
+		Action:     fields.Action,
+		Text:       fields.Text,
+		Poster:     fields.Poster,
+		RefId:      fields.RefId,
+	}
+}
+
 type rawUserFollow struct {
 	// follower's params
 	// FollowerAddress  string `json:"followerAddress"`  // we can use fields.name
@@ -80,27 +91,38 @@ type rawUserFollow struct {
 	} `json:"fields"`
 }
 
-type rawUserPage struct {
-	rawPageable[rawUser]
-}
-type rawNotePage struct {
-	rawPageable[rawNote]
-}
-type rawUserFollowPage struct {
-	rawPageable[rawUserFollow]
+func (u *rawUserFollow) MapToUserInfo() *UserInfo {
+	res := &UserInfo{Address: u.Fields.Name}
+	_ = json.Unmarshal(u.Fields.Value, res)
+	return res
 }
 
-func (p *rawPageable[T]) mapToBasePage(pageSize int) *Pageable {
+type rawPageable[O rawUser | rawNote | rawUserFollow, M UserInfo | Note] struct {
+	TotalCount int `json:"totalCount,omitempty"`
+	Edges      []struct {
+		Node   O      `json:"node"`
+		Cursor string `json:"cursor"`
+	} `json:"edges,omitempty"`
+	PageInfo *rawPageInfo `json:"pageInfo,omitempty"`
+}
+
+func (p *rawPageable[O, M]) mapToSdkPage(pageSize int, maper func(O) *M) *sdkPageable[M] {
 	currentCount := len(p.Edges)
 	if currentCount == 0 {
-		return &Pageable{
+		return &sdkPageable[M]{
 			TotalCount: p.TotalCount,
 		}
 	}
-	page := &Pageable{
+	items := make([]*M, currentCount)
+	for idx, node := range p.Edges {
+		items[idx] = maper(node.Node)
+	}
+	page := &sdkPageable[M]{
 		TotalCount:    p.TotalCount,
 		CurrentCount:  currentCount,
 		CurrentCursor: p.Edges[currentCount-1].Cursor,
+
+		Items: items,
 	}
 	if p.PageInfo != nil {
 		page.HasNextPage = p.PageInfo.HasNextPage
@@ -110,11 +132,19 @@ func (p *rawPageable[T]) mapToBasePage(pageSize int) *Pageable {
 	return page
 }
 
-type Pageable struct {
-	TotalCount    int    `json:"totalCount"`
-	CurrentCount  int    `json:"currentCount"`
-	CurrentCursor string `json:"currentCursor"`
-	HasNextPage   bool   `json:"hasNextPage"`
+func (p *rawPageable[O, M]) FirstObject() *O {
+	if len(p.Edges) <= 0 {
+		return nil
+	}
+	return &p.Edges[0].Node
+}
 
-	anyArray *base.AnyArray
+type rawUserPage struct {
+	rawPageable[rawUser, UserInfo]
+}
+type rawNotePage struct {
+	rawPageable[rawNote, Note]
+}
+type rawUserFollowPage struct {
+	rawPageable[rawUserFollow, UserInfo]
 }

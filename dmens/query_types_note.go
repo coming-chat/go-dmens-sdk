@@ -1,8 +1,6 @@
 package dmens
 
 import (
-	"time"
-
 	"github.com/coming-chat/wallet-SDK/core/base"
 )
 
@@ -36,29 +34,9 @@ func AsNote(any *base.Any) *Note {
 	return nil
 }
 
-type NotePage struct {
-	*Pageable
-	Notes []*Note `json:"notes"`
-}
-
-func (p *NotePage) JsonString() (string, error) {
-	return JsonString(p)
-}
-
-func (p *NotePage) NoteArray() *base.AnyArray {
-	if p.anyArray == nil {
-		a := make([]any, len(p.Notes))
-		for idx, n := range p.Notes {
-			a[idx] = n
-		}
-		p.anyArray = &base.AnyArray{Values: a}
-	}
-	return p.anyArray
-}
-
 type RepostNote struct {
 	*Note        // origin note info
-	Repost *Note // repost note info
+	Repost *Note `json:"repost"` // repost note info
 }
 
 func (p *RepostNote) JsonString() (string, error) {
@@ -79,86 +57,10 @@ func AsRepostNote(any *base.Any) *RepostNote {
 	return nil
 }
 
+type NotePage struct {
+	*sdkPageable[Note]
+}
+
 type RepostNotePage struct {
-	*Pageable
-	Notes []*RepostNote `json:"notes"`
-}
-
-func (p *RepostNotePage) JsonString() (string, error) {
-	return JsonString(p)
-}
-
-func (p *RepostNotePage) NoteArray() *base.AnyArray {
-	if p.anyArray == nil {
-		a := make([]any, len(p.Notes))
-		for idx, n := range p.Notes {
-			a[idx] = n
-		}
-		p.anyArray = &base.AnyArray{Values: a}
-	}
-	return p.anyArray
-}
-
-// 合并完成后，originPage 的 notes 会被清空
-func combineRepostPage(repostPage, originPage *NotePage) *RepostNotePage {
-	notes := make([]*RepostNote, len(repostPage.Notes))
-	for idx, note := range repostPage.Notes {
-		notes[idx] = &RepostNote{
-			Repost: note,
-		}
-		// 在 originPage 中找到对应的 note
-		for oidx, originNote := range originPage.Notes {
-			if originNote.NoteId == note.RefId {
-				notes[idx].Note = originNote
-				originPage.Notes = append(originPage.Notes[:oidx], originPage.Notes[oidx+1:]...)
-				continue
-			}
-		}
-	}
-	return &RepostNotePage{
-		Pageable: repostPage.Pageable,
-		Notes:    notes,
-	}
-}
-
-func (a *rawNote) MapToNote() *Note {
-	var timestamp int64 = 0
-	t, err := time.Parse("2006-01-02T15:04:05.999999", a.CreateTime)
-	if err == nil {
-		timestamp = t.Unix()
-	}
-	fields := a.Fields.Value.Fields
-	return &Note{
-		CreateTime: timestamp,
-		NoteId:     a.ObjectId,
-		Action:     fields.Action,
-		Text:       fields.Text,
-		Poster:     fields.Poster,
-		RefId:      fields.RefId,
-	}
-}
-
-// MapToNotePage
-// @param poster If you need to query the status of notes in batches, you need to provide the poster.
-func (a *rawNotePage) MapToNotePage(poster *Poster, pageSize int) *NotePage {
-	notes := make([]*Note, len(a.Edges))
-	for idx, n := range a.Edges {
-		notes[idx] = n.Node.MapToNote()
-	}
-	basePage := a.mapToBasePage(pageSize)
-	page := &NotePage{
-		Pageable: basePage,
-		Notes:    notes,
-	}
-	if poster != nil {
-		_ = poster.BatchQueryNoteStatus(page, "")
-	}
-	return page
-}
-
-func (a *rawNotePage) FirstObject() *rawNote {
-	if len(a.Edges) <= 0 {
-		return nil
-	}
-	return &a.Edges[0].Node
+	*sdkPageable[RepostNote]
 }

@@ -108,15 +108,15 @@ func (p *Poster) QueryNoteStatusById(noteId string, viewer string) (*NoteStatus,
 // 批量查询 page 中所有 note 的状态，数据会直接同步到 page 中每一个 note 对象中
 // @param viewer the note's viewer, if the viewer is empty, the poster's address will be queried.
 func (p *Poster) BatchQueryNoteStatus(page *NotePage, viewer string) error {
-	if len(page.Notes) == 0 {
+	if len(page.Items) == 0 {
 		return nil
 	}
 	if viewer == "" {
 		viewer = p.Address
 	}
-	notesList := make([]interface{}, len(page.Notes))
-	for idx, n := range page.Notes {
-		notesList[idx] = n
+	notesList := make([]interface{}, len(page.Items))
+	for idx, n := range page.Items {
+		notesList[idx] = n // pointer hashable.
 	}
 	_, err := base.MapListConcurrent(notesList, 5, func(i interface{}) (interface{}, error) {
 		note, ok := i.(*Note)
