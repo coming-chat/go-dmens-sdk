@@ -110,7 +110,7 @@ func (p *rawPageable[O, M]) mapToSdkPage(pageSize int, maper func(O) *M) *sdkPag
 	currentCount := len(p.Edges)
 	if currentCount == 0 {
 		return &sdkPageable[M]{
-			TotalCount: p.TotalCount,
+			TotalCount_: p.TotalCount,
 		}
 	}
 	items := make([]*M, currentCount)
@@ -118,16 +118,16 @@ func (p *rawPageable[O, M]) mapToSdkPage(pageSize int, maper func(O) *M) *sdkPag
 		items[idx] = maper(node.Node)
 	}
 	page := &sdkPageable[M]{
-		TotalCount:    p.TotalCount,
-		CurrentCount:  currentCount,
-		CurrentCursor: p.Edges[currentCount-1].Cursor,
+		TotalCount_:    p.TotalCount,
+		CurrentCount_:  currentCount,
+		CurrentCursor_: p.Edges[currentCount-1].Cursor,
 
 		Items: items,
 	}
 	if p.PageInfo != nil {
-		page.HasNextPage = p.PageInfo.HasNextPage
+		page.HasNextPage_ = p.PageInfo.HasNextPage
 	} else {
-		page.HasNextPage = currentCount >= pageSize
+		page.HasNextPage_ = currentCount >= pageSize
 	}
 	return page
 }

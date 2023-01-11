@@ -2,14 +2,43 @@ package dmens
 
 import "github.com/coming-chat/wallet-SDK/core/base"
 
+type Pageable interface {
+	// The total count of all data in the remote server.
+	TotalCount() int
+	// The count of data in the current page.
+	CurrentCount() int
+	// The cursor of the current page.
+	CurrentCursor() string
+	// Is there has next page.
+	HasNextPage() bool
+	JsonString() (string, error)
+	ItemArray() *base.AnyArray
+}
+
 type sdkPageable[T Note | UserInfo | RepostNote] struct {
-	TotalCount    int    `json:"totalCount"`
-	CurrentCount  int    `json:"currentCount"`
-	CurrentCursor string `json:"currentCursor"`
-	HasNextPage   bool   `json:"hasNextPage"`
+	TotalCount_    int    `json:"totalCount"`
+	CurrentCount_  int    `json:"currentCount"`
+	CurrentCursor_ string `json:"currentCursor"`
+	HasNextPage_   bool   `json:"hasNextPage"`
 
 	Items    []*T `json:"items"`
 	anyArray *base.AnyArray
+}
+
+func (p *sdkPageable[T]) TotalCount() int {
+	return p.TotalCount_
+}
+
+func (p *sdkPageable[T]) CurrentCount() int {
+	return p.CurrentCount_
+}
+
+func (p *sdkPageable[T]) CurrentCursor() string {
+	return p.CurrentCursor_
+}
+
+func (p *sdkPageable[T]) HasNextPage() bool {
+	return p.HasNextPage_
 }
 
 func (p *sdkPageable[T]) JsonString() (string, error) {
@@ -81,10 +110,10 @@ func combineRepostPage(repostPage, originPage *NotePage) *RepostNotePage {
 	}
 	return &RepostNotePage{
 		sdkPageable: &sdkPageable[RepostNote]{
-			TotalCount:    repostPage.TotalCount,
-			CurrentCount:  repostPage.CurrentCount,
-			CurrentCursor: repostPage.CurrentCursor,
-			HasNextPage:   repostPage.HasNextPage,
+			TotalCount_:    repostPage.TotalCount_,
+			CurrentCount_:  repostPage.CurrentCount_,
+			CurrentCursor_: repostPage.CurrentCursor_,
+			HasNextPage_:   repostPage.HasNextPage_,
 
 			Items: notes,
 		},

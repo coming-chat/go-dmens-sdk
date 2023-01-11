@@ -5,7 +5,7 @@ func (p *Poster) QueryNoteById(noteId string) (*Note, error) {
 	if err != nil {
 		return nil, err
 	}
-	if page.CurrentCount <= 0 {
+	if page.CurrentCount() <= 0 {
 		return nil, nil
 	}
 	return page.Items[0], nil

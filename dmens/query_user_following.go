@@ -68,7 +68,7 @@ func (p *Poster) QueryUserFollowCount(user string) (*UserFollowCount, error) {
 	return &UserFollowCount{
 		User: user,
 
-		FollowerCount:  follower.TotalCount,
-		FollowingCount: following.TotalCount,
+		FollowerCount:  follower.TotalCount(),
+		FollowingCount: following.TotalCount(),
 	}, nil
 }

@@ -155,7 +155,7 @@ func TestAsUserInfo(t *testing.T) {
 	require.Nil(t, err)
 
 	userArray := res.ItemArray()
-	for i := 0; i < res.CurrentCount; i++ {
+	for i := 0; i < res.CurrentCount(); i++ {
 		userAny := userArray.ValueOf(i)
 		user := AsUserInfo(userAny)
 		t.Log(user.JsonString())
@@ -168,7 +168,7 @@ func TestAsNote(t *testing.T) {
 	require.Nil(t, err)
 
 	noteArray := res.ItemArray()
-	for i := 0; i < res.CurrentCount; i++ {
+	for i := 0; i < res.CurrentCount(); i++ {
 		noteAny := noteArray.ValueOf(i)
 		note := AsNote(noteAny)
 		t.Log(note.JsonString())
