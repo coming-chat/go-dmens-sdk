@@ -100,6 +100,18 @@ func TestQueryUserInfoByAddress(t *testing.T) {
 	t.Log(res.JsonString())
 }
 
+func TestBatchQueryUserByAddressJson(t *testing.T) {
+	poster := DefaultPoster(t)
+	address := `[
+		"0xbf16dbc4b99159f3afc8e5743de75e9c53c3f171",
+		"0x7c1b34834f58064743252260eaefa9ce443b24ed",
+		"0xfe443c8f33482b1d5165fbd8bc007c58bd1cab41"
+	]`
+	res, err := poster.BatchQueryUserByAddressJson(address)
+	require.Nil(t, err)
+	t.Log(res.JsonString())
+}
+
 func TestQueryUserNoteList(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryUserNoteList("", 10, "")

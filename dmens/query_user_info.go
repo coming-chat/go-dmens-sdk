@@ -1,8 +1,43 @@
 package dmens
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
+	"strings"
+
+	"github.com/coming-chat/wallet-SDK/core/base"
 )
+
+// BatchQueryUserByAddressJson
+// @param jsonString address array's json string. e.g. `["0x1","0x2",   "0x3"]`
+func (p *Poster) BatchQueryUserByAddressJson(jsonString string) (*UserPage, error) {
+	data := []byte(jsonString)
+	var addresses []string
+	err := json.Unmarshal(data, &addresses)
+	if err != nil {
+		return nil, errors.New("invalid json string of address array")
+	}
+	arrayString := strings.Replace(jsonString, ",", " ", -1)
+	return p.batchQueryUserByArrayString(arrayString, len(addresses))
+}
+
+func (p *Poster) BatchQueryUserByAddressArray(array *base.StringArray) (*UserPage, error) {
+	data, err := json.Marshal(array.Values)
+	if err != nil {
+		return nil, err
+	}
+	arrayString := strings.Replace(string(data), ",", " ", -1)
+	return p.batchQueryUserByArrayString(arrayString, array.Count())
+}
+
+// batchQueryUserByArrayString
+// @param str address array's string(no ','). e.g. `["0x1" "0x2"   "0x3"]`
+func (p *Poster) batchQueryUserByArrayString(str string, count int) (*UserPage, error) {
+	// `filter: {address: {in: ["0x1" "0x2" "0x3"]}}`
+	filter := `filter: {address: {in: ` + str + `}}`
+	return p.queryUserInfos(count, "", filter)
+}
 
 // QueryUserInfoByAddress
 // @param address If the address is empty, the poster's address will be queried.
@@ -41,6 +76,10 @@ func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string)
 			  name
 			  nodeId
 			}
+		  }
+		  pageInfo {
+			endCursor
+			hasNextPage
 		  }
 		}
 	  }
