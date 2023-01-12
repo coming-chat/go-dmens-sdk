@@ -3,7 +3,7 @@ module github.com/coming-chat/go-dmens-sdk
 go 1.19
 
 require (
-	github.com/coming-chat/wallet-SDK v0.2.7-0.20230104025947-d7d28e00b8f5
+	github.com/coming-chat/wallet-SDK v0.2.7-0.20230112071800-786c343e9c8e
 	github.com/stretchr/testify v1.8.1
 )
 
@@ -11,7 +11,7 @@ require (
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20210318173838-ccb5cd955283 // indirect
 	github.com/centrifuge/go-substrate-rpc-client/v4 v4.0.0 // indirect
 	github.com/coming-chat/go-aptos v0.0.0-20221109075633-2804a4483f45 // indirect
-	github.com/coming-chat/go-sui v0.0.0-20221221025703-3baf27ab1391 // indirect
+	github.com/coming-chat/go-sui v0.0.0-20230112032952-8f5db11f5b56 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/base58 v1.0.3 // indirect

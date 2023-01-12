@@ -22,13 +22,35 @@ func (p *Poster) QueryUserNoteList(user string, pageSize int, afterCursor string
 // QueryUserRepostList
 // @param user If the user is empty, the poster's address will be queried.
 func (p *Poster) QueryUserRepostList(user string, pageSize int, afterCursor string) (*RepostNotePage, error) {
+	repostPage, originPage, err := p.queryUserRepostList(user, pageSize, afterCursor)
+	if err != nil {
+		return nil, err
+	}
+	page := combineRepostPage(repostPage, originPage)
+	return page, nil
+}
+
+// QueryUserRepostListAsNotePage
+// @param user If the user is empty, the poster's address will be queried.
+func (p *Poster) QueryUserRepostListAsNotePage(user string, pageSize int, afterCursor string) (*NotePage, error) {
+	repostPage, originPage, err := p.queryUserRepostList(user, pageSize, afterCursor)
+	if err != nil {
+		return nil, err
+	}
+	originPage.TotalCount_ = repostPage.TotalCount_
+	originPage.CurrentCursor_ = repostPage.CurrentCursor_
+	originPage.HasNextPage_ = repostPage.HasNextPage_
+	return originPage, nil
+}
+
+func (p *Poster) queryUserRepostList(user string, pageSize int, afterCursor string) (*NotePage, *NotePage, error) {
 	if user == "" {
 		user = p.Address
 	}
 	fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, poster: "%v"}}}}`, ACTION_REPOST, user)
 	repostPage, err := p.queryNoteList(pageSize, afterCursor, fieldJson, false)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	originNoteIds := make([]string, len(repostPage.Items))
@@ -37,11 +59,9 @@ func (p *Poster) QueryUserRepostList(user string, pageSize int, afterCursor stri
 	}
 	originNotePage, err := p.BatchQueryNoteByIds(originNoteIds)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-
-	page := combineRepostPage(repostPage, originNotePage)
-	return page, nil
+	return repostPage, originNotePage, nil
 }
 
 // QueryAllNoteList
