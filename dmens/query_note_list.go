@@ -52,6 +52,9 @@ func (p *Poster) queryUserRepostList(user string, pageSize int, afterCursor stri
 	if err != nil {
 		return nil, nil, err
 	}
+	if repostPage.CurrentCount() == 0 {
+		return repostPage, &NotePage{sdkPageable: &sdkPageable[Note]{}}, nil
+	}
 
 	originNoteIds := make([]string, len(repostPage.Items))
 	for idx, note := range repostPage.Items {
