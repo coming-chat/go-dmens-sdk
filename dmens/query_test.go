@@ -121,7 +121,8 @@ func TestQueryUserNoteList(t *testing.T) {
 
 func TestQueryUserRepostList(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserRepostList("0x6c5d2cd6e62734f61b4e318e58cbfd1c4b99dfaf", 4, "")
+	res, err := poster.QueryUserRepostList("", 4, "")
+	// res, err := poster.QueryUserRepostListAsNotePage("", 4, "")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }

@@ -37,10 +37,22 @@ func (p *Poster) QueryUserRepostListAsNotePage(user string, pageSize int, afterC
 	if err != nil {
 		return nil, err
 	}
-	originPage.TotalCount_ = repostPage.TotalCount_
-	originPage.CurrentCursor_ = repostPage.CurrentCursor_
-	originPage.HasNextPage_ = repostPage.HasNextPage_
-	return originPage, nil
+	page := combineRepostPage(repostPage, originPage)
+
+	originNotes := make([]*Note, 0)
+	for _, repost := range page.Items {
+		originNotes = append(originNotes, repost.Note)
+	}
+	resPage := &NotePage{
+		sdkPageable: &sdkPageable[Note]{
+			Items:          originNotes,
+			CurrentCount_:  len(originNotes),
+			TotalCount_:    repostPage.TotalCount_,
+			CurrentCursor_: repostPage.CurrentCursor_,
+			HasNextPage_:   repostPage.HasNextPage_,
+		},
+	}
+	return resPage, nil
 }
 
 func (p *Poster) queryUserRepostList(user string, pageSize int, afterCursor string) (*NotePage, *NotePage, error) {

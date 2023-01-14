@@ -104,7 +104,7 @@ func combineRepostPage(repostPage, originPage *NotePage) *RepostNotePage {
 			if originNote.NoteId == note.RefId {
 				notes[idx].Note = originNote
 				originPage.Items = append(originPage.Items[:oidx], originPage.Items[oidx+1:]...)
-				continue
+				break
 			}
 		}
 	}
