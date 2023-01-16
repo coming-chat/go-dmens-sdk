@@ -18,7 +18,7 @@ let poster = NewPosterWithAddress(suiAccount.Address(), configuration)
 
 * Build action's transaction
 
-```
+```go
 // register or update dmens user info
 let txn = Register(Profile{
     Name: "MyName"
@@ -42,14 +42,20 @@ let txn = poster.DmensFollow([address1, address2, address3, ...])
 let txn = poster.DmensUnfollow([address1, address2, address3, ...])
 ```
 
-* Estimate transaction gas fee
+* Get max gas budget
+```go
+let maxGasBudget = txn.maxGasBudget
 ```
+
+
+* Estimate transaction gas fee
+```go
 let gasFee = suiChain.EstimateGasFee(txn)
 print("estimate transaction gas fee = " gasFee.Value)
 ```
 
 * Sign & Send transaction
-```
+```go
 let signedTxn = txn.SignWithAccount(suiAccount)
 
 let txnHash = suiChain.SendRawTransaction(signedTxn.Value)
