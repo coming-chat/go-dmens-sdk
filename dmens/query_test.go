@@ -146,13 +146,24 @@ func TestQueryAllNoteList(t *testing.T) {
 }
 
 func TestQueryNoteStatusById(t *testing.T) {
-	noteId := "0xd1b1fa2d807fac385b9e3897778091e6074942c4"
+	noteId := "0x91d921dc5628a23a6f07a627af80f168b982c057"
 	viewer := ""
 
 	poster := DefaultPoster(t)
 	res, err := poster.QueryNoteStatusById(noteId, viewer)
 	require.Nil(t, err)
-	t.Log(res)
+	t.Log(JsonString(res))
+}
+
+func TestBatchQueryNoteStatusByIds(t *testing.T) {
+	noteids := []string{
+		"0x57bcbc127d6ac3a26a5cf6bbfdefd04c2903740a",
+		"0xf74ef6da596105f6596338ffc9b913a727237cc5",
+	}
+	poster := DefaultPoster(t)
+	res, err := poster.BatchQueryNoteStatusByIds(noteids, "")
+	require.Nil(t, err)
+	t.Log(JsonString(res))
 }
 
 func TestIsMyFollowing(t *testing.T) {

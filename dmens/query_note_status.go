@@ -1,11 +1,5 @@
 package dmens
 
-import (
-	"fmt"
-
-	"github.com/coming-chat/wallet-SDK/core/base"
-)
-
 type NoteStatus struct {
 	NoteId string `json:"noteId"`
 	Viewer string `json:"viewer"`
@@ -24,84 +18,11 @@ type NoteStatus struct {
 // @param noteId the note's id
 // @param viewer the note's viewer, if the viewer is empty, the poster's address will be queried.
 func (p *Poster) QueryNoteStatusById(noteId string, viewer string) (*NoteStatus, error) {
-	var res = &NoteStatus{
-		NoteId: noteId,
-		Viewer: viewer,
-	}
-	if viewer == "" {
-		viewer = p.Address
-	}
-
-	queryFormat := `
-	query NoteStatus {
-		allSuiObjects(
-		  filter: {
-			dataType: { equalTo: "moveObject" }
-			status: { equalTo: "Exists" }
-			type: { equalTo: "` + p.dmensObjectType() + `" }
-			fields: { contains: {value: {fields: {ref_id: "` + noteId + `", action: %v %v }}}}
-		  }
-		) {
-		  totalCount
-		}
-	  }
-	`
-	type action struct {
-		queryString string
-		execute     func(status *NoteStatus, count int)
-	}
-	actions := []interface{}{
-		&action{
-			queryString: fmt.Sprintf(queryFormat, ACTION_REPLY, ""),
-			execute: func(status *NoteStatus, count int) {
-				status.ReplyCount = count
-			},
-		},
-		&action{
-			queryString: fmt.Sprintf(queryFormat, ACTION_REPOST, ""),
-			execute: func(status *NoteStatus, count int) {
-				status.RepostCount = count
-			},
-		},
-		&action{
-			queryString: fmt.Sprintf(queryFormat, ACTION_REPOST, `, poster: "`+viewer+`"`),
-			execute: func(status *NoteStatus, count int) {
-				status.IsReposted = count > 0
-			},
-		},
-		&action{
-			queryString: fmt.Sprintf(queryFormat, ACTION_LIKE, ""),
-			execute: func(status *NoteStatus, count int) {
-				status.LikeCount = count
-			},
-		},
-		&action{
-			queryString: fmt.Sprintf(queryFormat, ACTION_LIKE, `, poster: "`+viewer+`"`),
-			execute: func(status *NoteStatus, count int) {
-				status.IsLiked = count > 0
-			},
-		},
-	}
-
-	_, err := base.MapListConcurrent(actions, 5, func(i interface{}) (interface{}, error) {
-		action, ok := i.(*action)
-		if !ok {
-			return i, nil
-		}
-		query := Query{Query: action.queryString}
-		var count int
-		err := p.makeQueryOut(&query, "allSuiObjects.totalCount", &count)
-		if err != nil {
-			return nil, err
-		}
-		action.execute(res, count)
-		return i, nil
-	})
+	statuses, err := p.BatchQueryNoteStatusByIds([]string{noteId}, viewer)
 	if err != nil {
 		return nil, err
 	}
-
-	return res, nil
+	return statuses[noteId], nil
 }
 
 // BatchQueryNoteStatus
@@ -114,21 +35,99 @@ func (p *Poster) BatchQueryNoteStatus(page *NotePage, viewer string) error {
 	if viewer == "" {
 		viewer = p.Address
 	}
-	notesList := make([]interface{}, len(page.Items))
-	for idx, n := range page.Items {
-		notesList[idx] = n // pointer hashable.
+
+	noteids := make([]string, len(page.Items))
+	for idx, note := range page.Items {
+		noteids[idx] = note.NoteId
 	}
-	_, err := base.MapListConcurrent(notesList, 5, func(i interface{}) (interface{}, error) {
-		note, ok := i.(*Note)
-		if !ok {
-			return i, nil
+	statuses, err := p.BatchQueryNoteStatusByIds(noteids, viewer)
+	if err != nil {
+		return err
+	}
+
+	for _, note := range page.Items {
+		if status, ok := statuses[note.NoteId]; ok {
+			note.Status = status
 		}
-		status, err := p.QueryNoteStatusById(note.NoteId, viewer)
-		if err != nil {
-			return nil, err
+	}
+
+	return nil
+}
+
+// BatchQueryNoteStatusByIds
+func (p *Poster) BatchQueryNoteStatusByIds(noteIds []string, viewer string) (map[string]*NoteStatus, error) {
+	if len(noteIds) == 0 {
+		return make(map[string]*NoteStatus, 0), nil
+	}
+	if viewer == "" {
+		viewer = p.Address
+	}
+
+	query := &Query{
+		Query: `
+		query MyQuery($dmensObjectType: String, $watcher: String, $dmensId: [String]) {
+			fetchDmensStatus(
+			  dmensId: $dmensId
+			  dmensType: $dmensObjectType
+			  watcher: $watcher
+			) {
+			  edges {
+				node {
+				  id
+				  actionCount
+				  action
+				  poster
+				}
+			  }
+			}
+		  }
+		`,
+		Variables: map[string]interface{}{
+			"dmensId":         noteIds,
+			"dmensObjectType": p.dmensObjectType(),
+			"watcher":         viewer,
+		},
+	}
+
+	type rawCounter struct {
+		Id          string     `json:"id"`
+		ActionCount int        `json:"actionCount,string"`
+		Action      NoteAction `json:"action"`
+		Poster      string     `json:"poster,omitempty"`
+	}
+	var out []struct {
+		Node rawCounter `json:"node"`
+	}
+	err := p.makeQueryOut(query, "fetchDmensStatus.edges", &out)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[string]*NoteStatus)
+	for _, node := range out {
+		counter := node.Node
+		status, exists := result[counter.Id]
+		if !exists {
+			status = &NoteStatus{
+				NoteId: counter.Id,
+				Viewer: viewer,
+			}
+			result[counter.Id] = status
 		}
-		note.Status = status
-		return i, nil
-	})
-	return err
+
+		isViewerActioned := (counter.Poster == viewer)
+		count := counter.ActionCount
+		switch counter.Action {
+		case ACTION_REPLY:
+			status.ReplyCount = count
+		case ACTION_REPOST:
+			status.RepostCount = count
+			status.IsReposted = isViewerActioned
+		case ACTION_LIKE:
+			status.LikeCount = count
+			status.IsLiked = isViewerActioned
+		}
+	}
+
+	return result, nil
 }
