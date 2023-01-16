@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/coming-chat/go-dmens-sdk/graphql"
+	"github.com/coming-chat/wallet-SDK/core/base"
 )
 
 type Query struct {
@@ -35,13 +36,15 @@ func (p *Poster) MakeQuery(q *Query) (string, error) {
 	return string(out), nil
 }
 
-func (p *Poster) makeQueryOut(q *Query, path string, out interface{}) error {
+func (p *Poster) makeQueryOut(q *Query, path string, out interface{}) (err error) {
+	defer base.CatchPanicAndMapToBasicError(&err)
+
 	if path == "" {
 		return graphql.FetchGraphQL(q.ActualQueryString(), q.OperationName, q.Variables, p.GraphqlUrl, out)
 	}
 
 	var oo interface{}
-	err := graphql.FetchGraphQL(q.ActualQueryString(), q.OperationName, q.Variables, p.GraphqlUrl, &oo)
+	err = graphql.FetchGraphQL(q.ActualQueryString(), q.OperationName, q.Variables, p.GraphqlUrl, &oo)
 	if err != nil {
 		return err
 	}

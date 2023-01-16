@@ -1,5 +1,7 @@
 package dmens
 
+import "github.com/coming-chat/wallet-SDK/core/base"
+
 func (p *Poster) queryIsFollowing(address string) *Query {
 	return &Query{
 		Query: `
@@ -23,7 +25,7 @@ query isMyfollowing($owner: JSON, $fields: JSON) {
 	}
 }
 
-func (p *Poster) IsMyFollowing(address string) (bool, error) {
+func (p *Poster) IsMyFollowing(address string) (*base.OptionalBool, error) {
 	var out []struct {
 		Fields struct {
 			Name  string `json:"name"`
@@ -33,15 +35,16 @@ func (p *Poster) IsMyFollowing(address string) (bool, error) {
 	query := p.queryIsFollowing(address)
 	err := p.makeQueryOut(query, "allSuiObjects.nodes", &out)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
+	falseb := &base.OptionalBool{Value: false}
 	if len(out) != 1 {
-		return false, nil
+		return falseb, nil
+	}
+	if out[0].Fields.Name != address {
+		return falseb, nil
 	}
 
-	if out[0].Fields.Name != address {
-		return false, nil
-	}
-	return true, nil
+	return &base.OptionalBool{Value: true}, nil
 }
