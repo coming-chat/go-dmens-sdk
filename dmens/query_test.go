@@ -146,13 +146,14 @@ func TestQueryAllNoteList(t *testing.T) {
 }
 
 func TestQueryNoteStatusById(t *testing.T) {
-	noteId := "0x91d921dc5628a23a6f07a627af80f168b982c057"
+	noteId := "0xa8422cb686fea931a288fa63738ee0503b9ca53e"
 	viewer := ""
 
 	poster := DefaultPoster(t)
 	res, err := poster.QueryNoteStatusById(noteId, viewer)
 	require.Nil(t, err)
 	t.Log(JsonString(res))
+	t.Log("")
 }
 
 func TestBatchQueryNoteStatusByIds(t *testing.T) {

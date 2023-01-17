@@ -4,9 +4,9 @@ type NoteStatus struct {
 	NoteId string `json:"noteId"`
 	Viewer string `json:"viewer"`
 
-	ReplyCount  int `json:"replyCount"`
-	RepostCount int `json:"repostCount"`
-	LikeCount   int `json:"likeCount"`
+	ReplyCount  int64 `json:"replyCount"`
+	RepostCount int64 `json:"repostCount"`
+	LikeCount   int64 `json:"likeCount"`
 
 	// Whether the viewer reposted it
 	IsReposted bool `json:"isReposted"`
@@ -76,7 +76,7 @@ func (p *Poster) BatchQueryNoteStatusByIds(noteIds []string, viewer string) (map
 				  id
 				  actionCount
 				  action
-				  poster
+				  posterCount
 				}
 			  }
 			}
@@ -91,9 +91,9 @@ func (p *Poster) BatchQueryNoteStatusByIds(noteIds []string, viewer string) (map
 
 	type rawCounter struct {
 		Id          string     `json:"id"`
-		ActionCount int        `json:"actionCount,string"`
 		Action      NoteAction `json:"action"`
-		Poster      string     `json:"poster,omitempty"`
+		ActionCount int64      `json:"actionCount,string"`
+		PosterCount int64      `json:"posterCount,string"`
 	}
 	var out []struct {
 		Node rawCounter `json:"node"`
@@ -115,7 +115,7 @@ func (p *Poster) BatchQueryNoteStatusByIds(noteIds []string, viewer string) (map
 			result[counter.Id] = status
 		}
 
-		isViewerActioned := (counter.Poster == viewer)
+		isViewerActioned := (counter.PosterCount > 0)
 		count := counter.ActionCount
 		switch counter.Action {
 		case ACTION_REPLY:
