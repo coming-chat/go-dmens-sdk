@@ -11,6 +11,7 @@ type Configuration struct {
 	ContractAddress      string
 	GlobalProfileId      string
 	GlobalProfileTableId string
+	ProfileCheckUrl      string
 	IsMainNet            bool
 }
 
