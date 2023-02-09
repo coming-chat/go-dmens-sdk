@@ -3,23 +3,24 @@ package dmens
 func (p *Poster) QueryTrendUserList(pageSize int) (*UserPage, error) {
 	query := Query{
 		Query: `
-		query trendingCharacters($first: Int, $profileId: String) {
-			trendingCharacters(first: $first, profileId: $profileId) {
+		query trendingCharacters($first: Int) {
+			trendingCharacters(first: $first) {
 			  totalCount
 			  edges {
 				cursor
 				node {
-				  fields
+				  address
+				  avatar
+				  bio
+				  name
 				  followerNumber
-				  owner
 				}
 			  }
 			}
 		  }
 		`,
 		Variables: map[string]interface{}{
-			"first":     pageSize,
-			"profileId": p.GlobalProfileTableId,
+			"first": pageSize,
 		},
 	}
 

@@ -87,10 +87,10 @@ github.com/cloudflare/cloudflare-go v0.14.0/go.mod h1:EnwdgGMaFOruiPZRFSgn+TsQ3h
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/coming-chat/go-aptos v0.0.0-20221109075633-2804a4483f45 h1:BqPY3c9NNuJ8OGdyVQdWueQcFwmOyywpPY+nDwf82e0=
 github.com/coming-chat/go-aptos v0.0.0-20221109075633-2804a4483f45/go.mod h1:HaGBPmQOlKzxkbGancRSX8wcwDxvj9Zs173CSla43vE=
-github.com/coming-chat/go-sui v0.0.0-20230114101317-aa45ff3e8e17 h1:eC1l+g69Brx9n51heHijJKyNKl8X9UYLpQC/BbVoCeI=
-github.com/coming-chat/go-sui v0.0.0-20230114101317-aa45ff3e8e17/go.mod h1:IT0m3ZSiKSXgitJT6rMuMAlfNal4ounjryXWqoNgrd8=
-github.com/coming-chat/wallet-SDK v0.2.7-0.20230116085814-4f17210b5697 h1:V3apjwYgfTKrVq0FYOZV2h83rowZ0wiCxU3iFBs4jFw=
-github.com/coming-chat/wallet-SDK v0.2.7-0.20230116085814-4f17210b5697/go.mod h1:JAE6aU6RbK5lD8wLnkt1KMPQJ8GSN2caGUbUjsu7dks=
+github.com/coming-chat/go-sui v0.0.0-20230209034634-51aa3c1db68b h1:exLlJoy1MUDiSK1Lc2yc2NSnAtr9ZdzUU4jsbpVTcwU=
+github.com/coming-chat/go-sui v0.0.0-20230209034634-51aa3c1db68b/go.mod h1:D3s+A1WjI5fg/htr/F1OR72+MGEFFtMoheufXfMDDPA=
+github.com/coming-chat/wallet-SDK v0.2.7-0.20230201093146-f884b6cac1f6 h1:pE/pfH6j0TnZaZua07oiSGlYwfvPsMOasci9qsp2EeE=
+github.com/coming-chat/wallet-SDK v0.2.7-0.20230201093146-f884b6cac1f6/go.mod h1:JAE6aU6RbK5lD8wLnkt1KMPQJ8GSN2caGUbUjsu7dks=
 github.com/consensys/bavard v0.1.8-0.20210406032232-f3452dc9b572/go.mod h1:Bpd0/3mZuaj6Sj+PqrmIquiOKy397AKGThQPaGzNXAQ=
 github.com/consensys/gnark-crypto v0.4.1-0.20210426202927-39ac3d4b3f1f/go.mod h1:815PAHg3wvysy0SyIqanF8gZ0Y1wjk/hrDHD/iT88+Q=
 github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d/go.mod h1:tSxLoYXyBmiFeKpvmq4dzayMdCjCnu8uqmCysIGBT2Y=
@@ -136,6 +136,8 @@ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7
 github.com/ethereum/go-ethereum v1.9.25/go.mod h1:vMkFiYLHI4tgPw4k2j4MHKoovchFE8plZ0M9VMk4/oM=
 github.com/ethereum/go-ethereum v1.10.18 h1:hLEd5M+UD0GJWPaROiYMRgZXl6bi5YwoTJSthsx5CZw=
 github.com/ethereum/go-ethereum v1.10.18/go.mod h1:RD3NhcSBjZpj3k+SnQq24wBrmnmie78P5R/P62iNBD8=
+github.com/fardream/go-bcs v0.2.1 h1:ffW/0Jr0b2WXLNPF8AX6wWI9ETVE4+aXkv2aIXVViwE=
+github.com/fardream/go-bcs v0.2.1/go.mod h1:UsoxhIoe2GsVexX0s5NDLIChxeb/JUbjw7IWzzgF3Xk=
 github.com/fatih/color v1.3.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fjl/gencodec v0.0.0-20220412091415-8bb9e558978c/go.mod h1:AzA8Lj6YtixmJWL+wkKoBGsLWy9gFrAzi4g+5bCKwpY=

@@ -3,8 +3,56 @@ package dmens
 import (
 	"testing"
 
+	"github.com/coming-chat/wallet-SDK/core/base"
+	"github.com/coming-chat/wallet-SDK/core/sui"
 	"github.com/stretchr/testify/require"
 )
+
+func TestRegister(t *testing.T) {
+	profile := Profile{
+		Name: "zhiuaanngggg",
+	}
+
+	acc, err := sui.NewAccountWithMnemonic(M1)
+	require.Nil(t, err)
+
+	poster := DefaultPoster(t)
+	poster.Address = acc.Address()
+
+	p, err := poster.CheckProfile(&profile)
+	require.Nil(t, err)
+
+	txn, err := poster.Register(p)
+	require.Nil(t, err)
+
+	signedTxn, err := txn.SignWithAccount(acc)
+	require.Nil(t, err)
+
+	hash, err := poster.chain.SendRawTransaction(signedTxn.Value)
+	require.Nil(t, err)
+	t.Log(hash)
+}
+
+func TestFollow(t *testing.T) {
+	acc, err := sui.NewAccountWithMnemonic(M1)
+	require.Nil(t, err)
+
+	poster := DefaultPoster(t)
+	poster.Address = acc.Address()
+
+	address := "0x6fc6148816617c3c3eccb1d09e930f73f6712c9c"
+	array := base.StringArray{Values: []string{address}}
+
+	txn, err := poster.DmensFollow(&array)
+	require.Nil(t, err)
+
+	signedTxn, err := txn.SignWithAccount(acc)
+	require.Nil(t, err)
+
+	hash, err := poster.chain.SendRawTransaction(signedTxn.Value)
+	require.Nil(t, err)
+	t.Log(hash)
+}
 
 func TestQueryNotesMyFollowed(t *testing.T) {
 	poster := DefaultPoster(t)
@@ -48,7 +96,7 @@ func TestQueryUserFollowing(t *testing.T) {
 
 func TestQueryUserFollowers(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserFollowers("0x3f432b985d6a5bd6f3b8f96a44f9adf272a59bb3", 10, "")
+	res, err := poster.QueryUserFollowers("0x6fc6148816617c3c3eccb1d09e930f73f6712c9c", 10, "")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
@@ -68,13 +116,6 @@ func TestQueryUserFollowCount(t *testing.T) {
 func TestQueryTrendUsers(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.QueryTrendUserList(10)
-	require.Nil(t, err)
-	t.Log(res.JsonString())
-}
-
-func TestQueryUserCharaters(t *testing.T) {
-	poster := DefaultPoster(t)
-	res, err := poster.queryUserCharacter("")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
@@ -103,7 +144,7 @@ func TestQueryUserInfoByAddress(t *testing.T) {
 func TestBatchQueryUserByAddressJson(t *testing.T) {
 	poster := DefaultPoster(t)
 	address := `[
-		"0xbf16dbc4b99159f3afc8e5743de75e9c53c3f171",
+		"0x6fc6148816617c3c3eccb1d09e930f73f6712c9c",
 		"0x7c1b34834f58064743252260eaefa9ce443b24ed",
 		"0xfe443c8f33482b1d5165fbd8bc007c58bd1cab41"
 	]`
@@ -146,7 +187,7 @@ func TestQueryAllNoteList(t *testing.T) {
 }
 
 func TestQueryNoteStatusById(t *testing.T) {
-	noteId := "0xa8422cb686fea931a288fa63738ee0503b9ca53e"
+	noteId := "0xac3430017e0cbeee0c4ffdf5c4803349f3d2c319"
 	viewer := ""
 
 	poster := DefaultPoster(t)
@@ -189,7 +230,8 @@ func TestAsUserInfo(t *testing.T) {
 
 func TestAsNote(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryTrendNoteList(10, "")
+	res, err := poster.QueryNotesMyFollowed(10, "")
+	// res, err := poster.QueryTrendNoteList(10, "")
 	require.Nil(t, err)
 
 	noteArray := res.ItemArray()

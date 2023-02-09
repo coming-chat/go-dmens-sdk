@@ -1,7 +1,6 @@
 package dmens
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -73,31 +72,13 @@ func (a *rawNote) MapToNote() *Note {
 	}
 }
 
-type rawUserFollow struct {
-	// follower's params
-	// FollowerAddress  string `json:"followerAddress"`  // we can use fields.name
-
-	// following's params
-	// FollowingAddress string `json:"followingAddress"` // we can use fields.name
-
+type rawTrendUser struct {
+	*UserInfo
 	// Trend Users's params
-	// FollowerNumber int    `json:"followerNumber,string"` // no need
-	// Owner          string `json:"owner"` // we can use fields.name
-
-	Fields struct {
-		// rawFieldsId
-		Name  string `json:"name"`
-		Value []byte `json:"value"`
-	} `json:"fields"`
+	FollowerNumber int64 `json:"followerNumber,string"`
 }
 
-func (u *rawUserFollow) MapToUserInfo() *UserInfo {
-	res := &UserInfo{Address: u.Fields.Name}
-	_ = json.Unmarshal(u.Fields.Value, res)
-	return res
-}
-
-type rawPageable[O rawUser | rawNote | rawUserFollow, M UserInfo | Note] struct {
+type rawPageable[O rawUser | rawNote | rawTrendUser, M UserInfo | Note] struct {
 	TotalCount int `json:"totalCount,omitempty"`
 	Edges      []struct {
 		Node   O      `json:"node"`
@@ -146,5 +127,5 @@ type rawNotePage struct {
 	rawPageable[rawNote, Note]
 }
 type rawUserFollowPage struct {
-	rawPageable[rawUserFollow, UserInfo]
+	rawPageable[rawTrendUser, UserInfo]
 }

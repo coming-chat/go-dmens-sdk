@@ -1,6 +1,7 @@
 package dmens
 
 import (
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
@@ -9,6 +10,7 @@ import (
 )
 
 var whoami = ""
+var M1 = os.Getenv("WalletSdkTestM1")
 
 func init() {
 	out, _ := exec.Command("whoami").Output()

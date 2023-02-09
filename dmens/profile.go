@@ -3,9 +3,10 @@ package dmens
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/coming-chat/wallet-SDK/core/sui"
 	"io"
 	"net/http"
+
+	"github.com/coming-chat/wallet-SDK/core/sui"
 )
 
 const (
@@ -24,7 +25,7 @@ type ValidProfile struct {
 	Signature string
 }
 
-func (p *Poster) Register(validProfile ValidProfile) (*sui.Transaction, error) {
+func (p *Poster) Register(validProfile *ValidProfile) (*sui.Transaction, error) {
 	return p.chain.BaseMoveCall(
 		p.Address,
 		p.ContractAddress,

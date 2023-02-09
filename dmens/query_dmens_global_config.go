@@ -11,6 +11,7 @@ func (p *Poster) QueryDmensGlobalConfig() *Query {
       				fullNodeUrl
       				globalProfileId
       				globalProfileTableId
+					profileCheckUrl
 			  	}
 			}
 		}
@@ -25,6 +26,7 @@ func (p *Poster) FetchDmensGlobalConfig() error {
 		FullNodeUrl          string `json:"fullNodeUrl"`
 		GlobalProfileId      string `json:"globalProfileId"`
 		GlobalProfileTableId string `json:"globalProfileTableId"`
+		ProfileCheckUrl      string `json:"profileCheckUrl"`
 	}
 	query := p.QueryDmensGlobalConfig()
 	err := p.makeQueryOut(query, "allSuiDmensGlobalConfigs.nodes", &out)
@@ -40,5 +42,6 @@ func (p *Poster) FetchDmensGlobalConfig() error {
 	p.ContractAddress = node.ContractAddress
 	p.GlobalProfileId = node.GlobalProfileId
 	p.GlobalProfileTableId = node.GlobalProfileTableId
+	p.ProfileCheckUrl = node.ProfileCheckUrl
 	return nil
 }

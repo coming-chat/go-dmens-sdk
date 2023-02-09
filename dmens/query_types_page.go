@@ -86,8 +86,8 @@ func (a *rawUserPage) MapToUserPage(pageSize int) *UserPage {
 
 // MapToUserPage
 func (a *rawUserFollowPage) MapToUserPage(pageSize int) *UserPage {
-	sdkPage := a.mapToSdkPage(pageSize, func(ruf rawUserFollow) *UserInfo {
-		return ruf.MapToUserInfo()
+	sdkPage := a.mapToSdkPage(pageSize, func(ruf rawTrendUser) *UserInfo {
+		return ruf.UserInfo
 	})
 	return &UserPage{sdkPageable: sdkPage}
 }

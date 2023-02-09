@@ -11,13 +11,11 @@ func (p *Poster) QueryUserFollowing(user string, pageSize int, afterCursor strin
 		query UserFollowing(
 			$dmensMetaObjectType: String
 			$objectOwner: String
-			$profileId: String
 			$first: Int
 		  ) {
 			following(
 			  dmensMetaObjectType: $dmensMetaObjectType
 			  objectOwner: $objectOwner
-			  profileId: $profileId
 			  first: $first
 			  after: #cursor#
 			) {
@@ -25,7 +23,11 @@ func (p *Poster) QueryUserFollowing(user string, pageSize int, afterCursor strin
 			  edges {
 				cursor
 				node {
-				  fields
+				  address
+				  avatar
+				  bio
+				  name
+				  nodeId
 				}
 			  }
 			}
@@ -34,13 +36,12 @@ func (p *Poster) QueryUserFollowing(user string, pageSize int, afterCursor strin
 		Variables: map[string]interface{}{
 			"dmensMetaObjectType": p.dmensMetaObjectType(),
 			"objectOwner":         user,
-			"profileId":           p.GlobalProfileTableId,
 			"first":               pageSize,
 		},
 		Cursor: afterCursor,
 	}
 
-	var out rawUserFollowPage
+	var out rawUserPage
 	err := p.makeQueryOut(&query, "following", &out)
 	if err != nil {
 		return nil, err
