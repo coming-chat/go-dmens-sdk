@@ -15,9 +15,12 @@ const (
 )
 
 type Profile struct {
-	Name   string `json:"name"`
-	Bio    string `json:"bio"`
-	Avatar string `json:"avatar"`
+	Name           string `json:"name"`
+	Bio            string `json:"bio"`
+	Avatar         string `json:"avatar"`
+	Background     string `json:"background"`
+	Website        string `json:"website"`
+	Identification string `json:"identification"`
 }
 
 type ValidProfile struct {
