@@ -129,5 +129,14 @@ func (p *Poster) BatchQueryNoteStatusByIds(noteIds []string, viewer string) (map
 		}
 	}
 
+	for _, id := range noteIds {
+		if _, exists := result[id]; !exists {
+			result[id] = &NoteStatus{
+				NoteId: id,
+				Viewer: viewer,
+			}
+		}
+	}
+
 	return result, nil
 }
