@@ -63,17 +63,22 @@ func (p *Poster) CheckProfile(profile *Profile) (*ValidProfile, error) {
 		return nil, err
 	}
 	var respData struct {
-		IsValid   bool   `json:"isValid"`
-		Signature string `json:"signature"`
+		IsValid   bool    `json:"isValid"`
+		Signature string  `json:"signature"`
+		Profile   Profile `json:"profile"`
 	}
 
 	err = json.Unmarshal(respBody, &respData)
 	if err != nil {
 		return nil, err
 	}
+	newProfileData, err := json.Marshal(respData.Profile)
+	if err != nil {
+		return nil, err
+	}
 	if respData.IsValid {
 		return &ValidProfile{
-			Profile:   string(profileBytes),
+			Profile:   string(newProfileData),
 			Signature: respData.Signature,
 		}, nil
 	}
