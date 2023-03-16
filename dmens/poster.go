@@ -1,6 +1,8 @@
 package dmens
 
 import (
+	"errors"
+
 	"github.com/coming-chat/wallet-SDK/core/sui"
 )
 
@@ -11,6 +13,9 @@ type Poster struct {
 }
 
 func NewPoster(posterConfig *PosterConfig, configuration *Configuration) (*Poster, error) {
+	if posterConfig == nil || configuration == nil {
+		return nil, errors.New("invalid poster params")
+	}
 	poster := &Poster{
 		Configuration: configuration,
 		PosterConfig:  posterConfig,
