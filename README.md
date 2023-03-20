@@ -65,7 +65,30 @@ print("transaction hash = ", txnHash.Value)
 ```
 
 * Query data
-........
+  ........
+
+* Following & Follower
+
+  ```go
+  // query the following status of a specified user.
+  let isFollowing = poster.IsMyFollowing(specifiedUser)
+  
+  // batch query the following status of all users in a specified list.
+  let userPage: *UserPage = ...
+  err = poster.BatchQueryIsFollowingStatus(userPage)
+  
+  // query following list
+  let users = poster.QueryUserFollowing("", pageSize, cursor)
+  
+  // query follower list
+  let users = poster.QueryUserFollowers("", pageSize, cursor)
+  
+  // get follow count
+  let counter = poster.QueryUserFollowCount("")
+  print(counter.FollowerCount)
+  print(counter.FollowingCount)
+  ```
+  
 
 
 ## Include content
