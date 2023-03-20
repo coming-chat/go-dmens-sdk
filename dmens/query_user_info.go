@@ -75,6 +75,9 @@ func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string)
 			  bio
 			  name
 			  nodeId
+			  background
+			  website
+			  identification
 			}
 		  }
 		  pageInfo {

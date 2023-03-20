@@ -14,6 +14,9 @@ func (p *Poster) QueryTrendUserList(pageSize int) (*UserPage, error) {
 				  bio
 				  name
 				  followerNumber
+				  background
+				  website
+				  identification
 				}
 			  }
 			}

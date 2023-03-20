@@ -11,6 +11,10 @@ type UserInfo struct {
 	Name    string `json:"name"`
 	NodeId  string `json:"nodeId"`
 
+	Background     string `json:"background"`
+	Website        string `json:"website"`
+	Identification string `json:"identification"`
+
 	IsFollowing bool `json:"isFollowing"`
 }
 

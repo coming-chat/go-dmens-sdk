@@ -28,6 +28,9 @@ func (p *Poster) QueryUserFollowers(user string, pageSize int, afterCursor strin
 				  bio
 				  name
 				  nodeId
+				  background
+				  website
+				  identification
 				}
 			  }
 			}

@@ -89,14 +89,14 @@ func TestBatchQueryNoteByIds(t *testing.T) {
 
 func TestQueryUserFollowing(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserFollowing("", 10, "")
+	res, err := poster.QueryUserFollowing("0xd059ab4c5c7d2be6537101f76c41f25cdf5cc26e", 10, "")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
 
 func TestQueryUserFollowers(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserFollowers("0x6fc6148816617c3c3eccb1d09e930f73f6712c9c", 10, "")
+	res, err := poster.QueryUserFollowers("0xd059ab4c5c7d2be6537101f76c41f25cdf5cc26e", 10, "")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
@@ -136,7 +136,7 @@ func TestQueryUserInfoByAddress(t *testing.T) {
 	t.Log(res.JsonString())
 
 	// query specified user's info
-	res, err = poster.QueryUserInfoByAddress("0x111")
+	res, err = poster.QueryUserInfoByAddress("0x5cbf57ec2dd5c4eb0560ee6ac20e9f8f3a75eca1")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
