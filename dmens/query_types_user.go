@@ -10,6 +10,8 @@ type UserInfo struct {
 	Bio     string `json:"bio"`
 	Name    string `json:"name"`
 	NodeId  string `json:"nodeId"`
+
+	IsFollowing bool `json:"isFollowing"`
 }
 
 func (u *UserInfo) JsonString() (string, error) {

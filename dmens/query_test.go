@@ -210,9 +210,24 @@ func TestBatchQueryNoteStatusByIds(t *testing.T) {
 
 func TestIsMyFollowing(t *testing.T) {
 	poster := DefaultPoster(t)
-	isFollow, err := poster.IsMyFollowing("0x7c1b34834f58064743252260eaefa9ce443b24ed")
+	isFollow, err := poster.IsMyFollowing("0xd059ab4c5c7d2be6537101f76c41f25cdf5cc26e")
 	require.Nil(t, err)
 	t.Log(isFollow)
+}
+
+func TestBatchQueryFollowingStatus(t *testing.T) {
+	poster := DefaultPoster(t)
+	viewer := "0x6d72b1de53d114352b9996a6c1a573a142f284e4"
+	users := []string{
+		"0x6f237da16dc1fede1bad6a250b03137cd8d9aef8", // true
+		"0x24cf35e631c4a5006789f0575a6b470160b887b5", // true
+		"0x7bc358b4e2e57332cb38a448740219be360b60ea", // false
+		"0x32592deb1f071d451a2d93fe34851e2229cd6635", // true
+		"0x6d72b1de53d114352b9996a6c1a573a142f284e4", // false
+	}
+	status, err := poster.batchQueryIsFollowingStatus(viewer, users)
+	require.Nil(t, err)
+	t.Log(status)
 }
 
 func TestAsUserInfo(t *testing.T) {
