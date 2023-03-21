@@ -15,6 +15,8 @@ type Pageable interface {
 	ItemArray() *base.AnyArray
 }
 
+// `sdkPageable` implemented wallet-SDK/base's interface `Jsonable`
+// If you new class `Xxx` extends it, you should implement `NewXxxWithJsonString` by your self.
 type sdkPageable[T Note | UserInfo | RepostNote] struct {
 	TotalCount_    int    `json:"totalCount"`
 	CurrentCount_  int    `json:"currentCount"`
@@ -41,8 +43,8 @@ func (p *sdkPageable[T]) HasNextPage() bool {
 	return p.HasNextPage_
 }
 
-func (p *sdkPageable[T]) JsonString() (string, error) {
-	return JsonString(p)
+func (p *sdkPageable[T]) JsonString() (*base.OptionalString, error) {
+	return base.JsonString(p)
 }
 
 func (p *sdkPageable[T]) ItemArray() *base.AnyArray {

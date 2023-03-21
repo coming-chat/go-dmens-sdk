@@ -187,13 +187,13 @@ func TestQueryAllNoteList(t *testing.T) {
 }
 
 func TestQueryNoteStatusById(t *testing.T) {
-	noteId := "0xac3430017e0cbeee0c4ffdf5c4803349f3d2c319"
+	noteId := "0xb55179496b3de3b835b9936c8ece4aa8954e7805"
 	viewer := ""
 
 	poster := DefaultPoster(t)
 	res, err := poster.QueryNoteStatusById(noteId, viewer)
 	require.Nil(t, err)
-	t.Log(JsonString(res))
+	t.Log(base.JsonString(res))
 	t.Log("")
 }
 
@@ -205,7 +205,7 @@ func TestBatchQueryNoteStatusByIds(t *testing.T) {
 	poster := DefaultPoster(t)
 	res, err := poster.BatchQueryNoteStatusByIds(noteids, "")
 	require.Nil(t, err)
-	t.Log(JsonString(res))
+	t.Log(base.JsonString(res))
 }
 
 func TestIsMyFollowing(t *testing.T) {
@@ -255,4 +255,34 @@ func TestAsNote(t *testing.T) {
 		note := AsNote(noteAny)
 		t.Log(note.JsonString())
 	}
+}
+
+func TestJsonable(t *testing.T) {
+	poster := DefaultPoster(t)
+
+	// --------------- NotePage
+	notes, err := poster.QueryTrendNoteList(3, "")
+	require.Nil(t, err)
+	require.GreaterOrEqual(t, notes.TotalCount(), 1)
+	require.LessOrEqual(t, notes.CurrentCount(), 3)
+
+	jsonString, err := notes.JsonString()
+	require.Nil(t, err)
+
+	newNotes, err := NewNotePageWithJsonString(jsonString.Value)
+	require.Nil(t, err)
+	require.Equal(t, notes, newNotes)
+
+	// --------------- UserPage
+	users, err := poster.QueryTrendUserList(3)
+	require.Nil(t, err)
+	require.GreaterOrEqual(t, users.TotalCount(), 1)
+	require.LessOrEqual(t, users.CurrentCount(), 3)
+
+	jsonString, err = users.JsonString()
+	require.Nil(t, err)
+
+	newUsers, err := NewUserPageWithJsonString(jsonString.Value)
+	require.Nil(t, err)
+	require.Equal(t, users, newUsers)
 }

@@ -18,8 +18,13 @@ type UserInfo struct {
 	IsFollowing bool `json:"isFollowing"`
 }
 
-func (u *UserInfo) JsonString() (string, error) {
-	return JsonString(u)
+func (u *UserInfo) JsonString() (*base.OptionalString, error) {
+	return base.JsonString(u)
+}
+func NewUserInfoWithJsonString(str string) (*UserInfo, error) {
+	var o UserInfo
+	err := base.FromJsonString(str, &o)
+	return &o, err
 }
 
 func (u *UserInfo) AsAny() *base.Any {
@@ -43,10 +48,21 @@ type UserFollowCount struct {
 	FollowingCount int `json:"followingCount"`
 }
 
-func (n *UserFollowCount) JsonString() (string, error) {
-	return JsonString(n)
+func (u *UserFollowCount) JsonString() (*base.OptionalString, error) {
+	return base.JsonString(u)
+}
+func NewUserFollowCountWithJsonString(str string) (*UserFollowCount, error) {
+	var o UserFollowCount
+	err := base.FromJsonString(str, &o)
+	return &o, err
 }
 
 type UserPage struct {
 	*sdkPageable[UserInfo]
+}
+
+func NewUserPageWithJsonString(str string) (*UserPage, error) {
+	var o sdkPageable[UserInfo]
+	err := base.FromJsonString(str, &o)
+	return &UserPage{&o}, err
 }
