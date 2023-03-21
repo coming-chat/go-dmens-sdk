@@ -64,5 +64,8 @@ type UserPage struct {
 func NewUserPageWithJsonString(str string) (*UserPage, error) {
 	var o sdkPageable[UserInfo]
 	err := base.FromJsonString(str, &o)
-	return &UserPage{&o}, err
+	if err != nil {
+		return nil, err
+	}
+	return &UserPage{&o}, nil
 }

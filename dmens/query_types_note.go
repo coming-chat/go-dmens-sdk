@@ -74,7 +74,10 @@ type NotePage struct {
 func NewNotePageWithJsonString(str string) (*NotePage, error) {
 	var o sdkPageable[Note]
 	err := base.FromJsonString(str, &o)
-	return &NotePage{&o}, err
+	if err != nil {
+		return nil, err
+	}
+	return &NotePage{&o}, nil
 }
 
 type RepostNotePage struct {
@@ -84,5 +87,8 @@ type RepostNotePage struct {
 func NewRepostNotePageWithJsonString(str string) (*RepostNotePage, error) {
 	var o sdkPageable[RepostNote]
 	err := base.FromJsonString(str, &o)
-	return &RepostNotePage{&o}, err
+	if err != nil {
+		return nil, err
+	}
+	return &RepostNotePage{&o}, nil
 }
