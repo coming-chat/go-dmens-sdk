@@ -64,6 +64,31 @@ print("transaction hash = ", txnHash.Value)
 
 ```
 
+* NFT Avatar
+```go
+// get user's nft avatar
+var user: UserInfo = ...
+print(user.NFTAvatar)
+
+// query nft avatar by nftid
+var avatar = poster.QueryNFTAvatar(nftid)
+
+// batch query nft avatar for user page
+var userPage: UserPage = ...
+err = poster.BatchQueryNFTAvatarForUserPage(userPage)
+
+// Transaction
+// set avatar transaction
+var txn = poster.SetNftAvatar(nftid)
+
+// remove avatar transaction
+var user: UserInfo = ...
+var txn = poster.RemoveNftAvatar(user.NFTAvatar)
+
+// sign & send transaction ...
+
+```
+
 * Query data
   ........
 
