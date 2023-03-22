@@ -50,7 +50,16 @@ func (p *Poster) QueryUserInfoByAddress(address string) (*UserInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	return page.FirstObject(), nil
+
+	user := page.FirstObject()
+	if user == nil {
+		return nil, nil
+	}
+	name, _ := p.QuerySuiNameByAddress(user.Address)
+	if name != nil {
+		user.SuiName = name.Value
+	}
+	return user, nil
 }
 
 func (p *Poster) QueryUsersByName(name string, pageSize int, afterCursor string) (*UserPage, error) {

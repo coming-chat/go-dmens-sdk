@@ -8,6 +8,7 @@ import (
 
 	"github.com/coming-chat/go-sui/client"
 	"github.com/coming-chat/go-sui/types"
+	"github.com/coming-chat/wallet-SDK/core/base"
 )
 
 type NFTAvatar struct {
@@ -119,4 +120,43 @@ func mapToNFTAvatar(obj *types.ObjectRead) *NFTAvatar {
 		Image: strings.Replace(meta.Fields.Url, "ipfs://", "https://ipfs.io/ipfs/", 1),
 		Type:  meta.Type,
 	}
+}
+
+func (p *Poster) QuerySuiNameByAddress(address string) (*base.OptionalString, error) {
+	client, err := p.chain.Client()
+	if err != nil {
+		return nil, err
+	}
+	addr, err := types.NewAddressFromHex(address)
+	if err != nil {
+		return nil, err
+	}
+	objs, err := client.BatchGetFilteredObjectsOwnedByAddress(context.Background(), *addr, func(oi types.ObjectInfo) bool {
+		if strings.HasSuffix(oi.Type, "::base_registrar::RegistrationNFT") {
+			return true
+		}
+		return false
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, obj := range objs {
+		var out struct {
+			Fields struct {
+				Name string `json:"name"`
+			} `json:"fields"`
+		}
+		data, err := json.Marshal(obj.Details.Data)
+		if err != nil {
+			continue
+		}
+		err = json.Unmarshal(data, &out)
+		if err != nil {
+			continue
+		}
+		if out.Fields.Name != "" {
+			return &base.OptionalString{Value: out.Fields.Name}, nil
+		}
+	}
+	return nil, fmt.Errorf("sui name by address `%v` not found", address)
 }

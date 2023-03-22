@@ -15,6 +15,9 @@ type UserInfo struct {
 	Website        string `json:"website"`
 	Identification string `json:"identification"`
 
+	// Only queried when call QueryUserInfoByAddress
+	SuiName string `json:"suiName"`
+
 	// NFT avatar's nftid
 	Item      []string   `json:"item"`
 	NFTAvatar *NFTAvatar `json:"nftAvatar"`
