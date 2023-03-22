@@ -89,6 +89,25 @@ var txn = poster.RemoveNftAvatar(user.NFTAvatar)
 
 ```
 
+* Sui Name
+
+```go
+type UserInfo {
+	// Only queried when call QueryUserInfoByAddress
+	SuiName string `json:"suiName"`
+  ......
+}
+
+var user = poster.QueryUserInfoByAddress(address)
+print(user.SuiName)
+
+// only query sui name
+var name = poster.QuerySuiNameByAddress(address)
+print(name)
+```
+
+
+
 * Query data
   ........
 
@@ -113,7 +132,7 @@ var txn = poster.RemoveNftAvatar(user.NFTAvatar)
   print(counter.FollowerCount)
   print(counter.FollowingCount)
   ```
-  
+
 
 
 ## Include content
