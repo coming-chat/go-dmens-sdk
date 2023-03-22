@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	profileModule    = "profile"
-	FunctionRegister = "register"
+	profileModule      = "profile"
+	FunctionRegister   = "register"
+	FunctionAddItem    = "add_item"
+	FunctionRemoveItem = "remove_item"
 )
 
 type Profile struct {
@@ -83,4 +85,34 @@ func (p *Poster) CheckProfile(profile *Profile) (*ValidProfile, error) {
 		}, nil
 	}
 	return nil, ErrNotValidPorfile
+}
+
+func (p *Poster) SetNftAvatar(nftId string) (*sui.Transaction, error) {
+	nft, err := p.QueryNFTAvatar(nftId)
+	if err != nil {
+		return nil, err
+	}
+	return p.chain.BaseMoveCall(
+		p.Address,
+		p.ContractAddress,
+		profileModule,
+		FunctionAddItem,
+		[]any{
+			nft.Type,
+			p.GlobalProfileId,
+			nft.Id,
+		})
+}
+
+func (p *Poster) RemoveNftAvatar(avatar *NFTAvatar) (*sui.Transaction, error) {
+	return p.chain.BaseMoveCall(
+		p.Address,
+		p.ContractAddress,
+		profileModule,
+		FunctionRemoveItem,
+		[]any{
+			avatar.Type,
+			p.GlobalProfileId,
+			avatar.Id,
+		})
 }

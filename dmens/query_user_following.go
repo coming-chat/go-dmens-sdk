@@ -31,6 +31,7 @@ func (p *Poster) QueryUserFollowing(user string, pageSize int, afterCursor strin
 				  background
 				  website
 				  identification
+				  item
 				}
 			  }
 			}
@@ -50,7 +51,9 @@ func (p *Poster) QueryUserFollowing(user string, pageSize int, afterCursor strin
 		return nil, err
 	}
 
-	return out.MapToUserPage(pageSize), nil
+	page := out.MapToUserPage(pageSize)
+	p.BatchQueryNFTAvatarForUserPage(page)
+	return page, nil
 }
 
 // QueryUserFollowCount

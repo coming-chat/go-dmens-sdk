@@ -15,6 +15,10 @@ type UserInfo struct {
 	Website        string `json:"website"`
 	Identification string `json:"identification"`
 
+	// NFT avatar's nftid
+	Item      []string   `json:"item"`
+	NFTAvatar *NFTAvatar `json:"nftAvatar"`
+
 	IsFollowing bool `json:"isFollowing"`
 }
 

@@ -17,6 +17,7 @@ func (p *Poster) QueryTrendUserList(pageSize int) (*UserPage, error) {
 				  background
 				  website
 				  identification
+				  item
 				}
 			  }
 			}
@@ -33,5 +34,7 @@ func (p *Poster) QueryTrendUserList(pageSize int) (*UserPage, error) {
 		return nil, err
 	}
 
-	return out.MapToUserPage(pageSize), nil
+	page := out.MapToUserPage(pageSize)
+	p.BatchQueryNFTAvatarForUserPage(page)
+	return page, nil
 }

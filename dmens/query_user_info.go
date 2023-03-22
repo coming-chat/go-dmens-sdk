@@ -78,6 +78,7 @@ func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string)
 			  background
 			  website
 			  identification
+			  item
 			}
 		  }
 		  pageInfo {
@@ -101,5 +102,7 @@ func (p *Poster) queryUserInfos(pageSize int, afterCursor string, filter string)
 		return nil, err
 	}
 
-	return out.MapToUserPage(pageSize), nil
+	page := out.MapToUserPage(pageSize)
+	p.BatchQueryNFTAvatarForUserPage(page)
+	return page, nil
 }

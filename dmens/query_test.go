@@ -136,7 +136,10 @@ func TestQueryUserInfoByAddress(t *testing.T) {
 	t.Log(res.JsonString())
 
 	// query specified user's info
-	res, err = poster.QueryUserInfoByAddress("0x5cbf57ec2dd5c4eb0560ee6ac20e9f8f3a75eca1")
+	// res, err = poster.QueryUserInfoByAddress("0x5cbf57ec2dd5c4eb0560ee6ac20e9f8f3a75eca1")
+
+	// query user info have nft avatar
+	res, err = poster.QueryUserInfoByAddress("0x5f2bd2399ec538a71f56b6928ca4d8b11200fe08")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
