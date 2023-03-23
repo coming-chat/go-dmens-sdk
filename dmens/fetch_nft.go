@@ -17,6 +17,14 @@ type NFTAvatar struct {
 	Type  string `json:"type"`
 }
 
+func NewNFTAvatar(nftId, image, typ string) *NFTAvatar {
+	return &NFTAvatar{
+		Id:    nftId,
+		Image: image,
+		Type:  typ,
+	}
+}
+
 func (p *Poster) BatchQueryNFTAvatarForUserPage(page *UserPage) error {
 	ids := make([]string, 0)
 	for _, user := range page.Items {
