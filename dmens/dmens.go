@@ -26,6 +26,7 @@ func (p *Poster) DmensPost(text string) (*sui.Transaction, error) {
 		p.ContractAddress,
 		dmensModule,
 		functionPost,
+		[]string{},
 		[]any{
 			p.DmensNftId,
 			appIdForComingChatApp,
@@ -41,6 +42,7 @@ func (p *Poster) DmensPostWithRef(action int, text, refIdentifier string) (*sui.
 		p.ContractAddress,
 		dmensModule,
 		functionPostRef,
+		[]string{},
 		[]any{
 			p.DmensNftId,
 			appIdForComingChatApp,
@@ -57,6 +59,7 @@ func (p *Poster) DmensFollow(addresses *base.StringArray) (*sui.Transaction, err
 		p.ContractAddress,
 		dmensModule,
 		functionFollow,
+		[]string{},
 		[]any{
 			p.DmensNftId,
 			addresses.Values,
@@ -70,6 +73,7 @@ func (p *Poster) DmensUnfollow(addresses *base.StringArray) (*sui.Transaction, e
 		p.ContractAddress,
 		dmensModule,
 		functionUnfollow,
+		[]string{},
 		[]any{
 			p.DmensNftId,
 			addresses.Values,

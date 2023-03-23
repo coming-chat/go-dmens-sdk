@@ -36,6 +36,7 @@ func (p *Poster) Register(validProfile *ValidProfile) (*sui.Transaction, error) 
 		p.ContractAddress,
 		profileModule,
 		FunctionRegister,
+		[]string{},
 		[]any{
 			p.GlobalProfileId,
 			validProfile.Profile,
@@ -97,8 +98,10 @@ func (p *Poster) SetNftAvatar(nftId string) (*sui.Transaction, error) {
 		p.ContractAddress,
 		profileModule,
 		FunctionAddItem,
-		[]any{
+		[]string{
 			nft.Type,
+		},
+		[]any{
 			p.GlobalProfileId,
 			nft.Id,
 		})
@@ -110,8 +113,10 @@ func (p *Poster) RemoveNftAvatar(avatar *NFTAvatar) (*sui.Transaction, error) {
 		p.ContractAddress,
 		profileModule,
 		FunctionRemoveItem,
-		[]any{
+		[]string{
 			avatar.Type,
+		},
+		[]any{
 			p.GlobalProfileId,
 			avatar.Id,
 		})

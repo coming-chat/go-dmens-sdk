@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/coming-chat/go-sui v0.0.0-20230302033519-1628554cea3a
-	github.com/coming-chat/wallet-SDK v0.2.7-0.20230322034513-38f53a5fb434
+	github.com/coming-chat/wallet-SDK v0.2.7-0.20230323072241-7f9acd7c8357
 	github.com/stretchr/testify v1.8.1
 )
 
