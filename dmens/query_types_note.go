@@ -16,6 +16,10 @@ type Note struct {
 	Status *NoteStatus `json:"status"`
 }
 
+func NewNote() *Note {
+	return &Note{}
+}
+
 func (n *Note) JsonString() (*base.OptionalString, error) {
 	return base.JsonString(n)
 }
@@ -42,6 +46,10 @@ func AsNote(any *base.Any) *Note {
 type RepostNote struct {
 	*Note        // origin note info
 	Repost *Note `json:"repost"` // repost note info
+}
+
+func NewRepostNote() *RepostNote {
+	return &RepostNote{}
 }
 
 func (n *RepostNote) JsonString() (*base.OptionalString, error) {
@@ -71,6 +79,10 @@ type NotePage struct {
 	*sdkPageable[Note]
 }
 
+func NewNotePage() *NotePage {
+	return &NotePage{}
+}
+
 func NewNotePageWithJsonString(str string) (*NotePage, error) {
 	var o sdkPageable[Note]
 	err := base.FromJsonString(str, &o)
@@ -82,6 +94,10 @@ func NewNotePageWithJsonString(str string) (*NotePage, error) {
 
 type RepostNotePage struct {
 	*sdkPageable[RepostNote]
+}
+
+func NewRepostNotePage() *RepostNotePage {
+	return &RepostNotePage{}
 }
 
 func NewRepostNotePageWithJsonString(str string) (*RepostNotePage, error) {

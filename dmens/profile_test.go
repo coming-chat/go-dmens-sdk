@@ -76,9 +76,25 @@ func TestSetNFTAvatar(t *testing.T) {
 
 func TestRemoveNFTAvatar(t *testing.T) {
 	poster := DefaultPoster(t)
-	nftId := "0xb6bb02c3e96df53b2bca7933fb14f2ca610ec737"
-	nftType := "0xdec6c36334e10ca71f8e9b5748d14a5276c269e3::dmens::DmensMeta"
+	nftId := "0x94391ecd915b8df4e8273df1d9aa5c5e1f10f909"
+	nftType := "0x8521368cac606257ce902ccf1735ac41d9acc709::capy::Capy"
 	txn, err := poster.RemoveNftAvatar(&NFTAvatar{Id: nftId, Type: nftType})
 	require.Nil(t, err)
 	t.Log(txn)
+
+	// hash := signAndSendTxn(t, poster, M1, txn)
+	// t.Log(hash)
+}
+
+func signAndSendTxn(t *testing.T, poster *Poster, mnemonic string, txn *sui.Transaction) string {
+	acc, err := sui.NewAccountWithMnemonic(mnemonic)
+	require.Nil(t, err)
+
+	signedTxn, err := txn.SignWithAccount(acc)
+	require.Nil(t, err)
+
+	hash, err := poster.chain.SendRawTransaction(signedTxn.Value)
+	require.Nil(t, err)
+
+	return hash
 }
