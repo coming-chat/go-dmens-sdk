@@ -17,12 +17,39 @@ type NFTAvatar struct {
 	Type  string `json:"type"`
 }
 
-func NewNFTAvatar(nftId, image, typ string) *NFTAvatar {
+func NewNFTAvatar() *NFTAvatar {
+	return &NFTAvatar{}
+}
+
+func NewNFTAvatarWithId(nftId, image, typ string) *NFTAvatar {
 	return &NFTAvatar{
 		Id:    nftId,
 		Image: image,
 		Type:  typ,
 	}
+}
+
+func (n *NFTAvatar) JsonString() (*base.OptionalString, error) {
+	return base.JsonString(n)
+}
+func NewNFTAvatarWithJsonString(str string) (*NFTAvatar, error) {
+	var o NFTAvatar
+	err := base.FromJsonString(str, &o)
+	return &o, err
+}
+
+func (n *NFTAvatar) AsAny() *base.Any {
+	return &base.Any{Value: n}
+}
+
+func AsNFTAvatar(any *base.Any) *NFTAvatar {
+	if res, ok := any.Value.(*NFTAvatar); ok {
+		return res
+	}
+	if res, ok := any.Value.(NFTAvatar); ok {
+		return &res
+	}
+	return nil
 }
 
 func (p *Poster) BatchQueryNFTAvatarForUserPage(page *UserPage) error {
