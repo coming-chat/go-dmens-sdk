@@ -3,8 +3,10 @@ package dmens
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/coming-chat/wallet-SDK/core/sui"
 )
@@ -92,6 +94,9 @@ func (p *Poster) SetNftAvatar(nftId string) (*sui.Transaction, error) {
 	nft, err := p.QueryNFTAvatar(nftId)
 	if err != nil {
 		return nil, err
+	}
+	if strings.HasSuffix(nft.Type, "::dmens::DmensMeta") {
+		return nil, errors.New("DMens NFT can't be set to NFT avater.")
 	}
 	return p.chain.BaseMoveCall(
 		p.Address,

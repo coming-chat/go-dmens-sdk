@@ -68,10 +68,10 @@ func TestPoster_CheckProfile(t *testing.T) {
 
 func TestSetNFTAvatar(t *testing.T) {
 	poster := DefaultPoster(t)
-	nftId := "0xb6bb02c3e96df53b2bca7933fb14f2ca610ec737"
-	txn, err := poster.SetNftAvatar(nftId)
-	require.Nil(t, err)
-	t.Log(txn)
+	nftId := "0xb6bb02c3e96df53b2bca7933fb14f2ca610ec737" // dmens nft
+	_, err := poster.SetNftAvatar(nftId)
+	require.Error(t, err)
+	// t.Log(txn)
 }
 
 func TestRemoveNFTAvatar(t *testing.T) {
