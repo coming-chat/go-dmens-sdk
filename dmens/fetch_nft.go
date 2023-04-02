@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/coming-chat/go-sui/client"
 	"github.com/coming-chat/go-sui/types"
 	"github.com/coming-chat/wallet-SDK/core/base"
 )
@@ -15,6 +14,7 @@ type NFTAvatar struct {
 	Id    string `json:"id"`
 	Image string `json:"image"`
 	Type  string `json:"type"`
+	Name  string `json:"name"`
 }
 
 func NewNFTAvatar() *NFTAvatar {
@@ -97,29 +97,33 @@ func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (map[string]*NFTAvata
 	if len(nftIds) <= 0 {
 		return nil, nil
 	}
-	var elems []client.BatchElem
-	for _, nftid := range nftIds {
-		elems = append(elems, client.BatchElem{
-			Method: "sui_getObject",
-			Args:   []interface{}{nftid},
-			Result: &types.ObjectRead{},
-		})
+
+	ids := make([]types.ObjectId, 0)
+	for _, nftId := range nftIds {
+		id, err := types.NewHexData(nftId)
+		if err != nil {
+			continue
+		}
+		ids = append(ids, *id)
 	}
 	client, err := p.chain.Client()
 	if err != nil {
 		return nil, err
 	}
-	err = client.BatchCallContext(context.Background(), elems)
+	elems, err := client.MultiGetObjects(context.Background(), ids, &types.SuiObjectDataOptions{
+		ShowType:    true,
+		ShowContent: true,
+	})
 	if err != nil {
 		return nil, err
 	}
+
 	results := make(map[string]*NFTAvatar)
 	for _, ele := range elems {
 		if ele.Error != nil {
-			return nil, ele.Error
+			return nil, fmt.Errorf("query nftid %v error", ele.Error.ObjectId)
 		}
-		obj := ele.Result.(*types.ObjectRead)
-		avatar := mapToNFTAvatar(obj)
+		avatar := mapToNFTAvatar(ele.Data)
 		if avatar != nil {
 			results[avatar.Id] = avatar
 		}
@@ -127,33 +131,32 @@ func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (map[string]*NFTAvata
 	return results, nil
 }
 
-func mapToNFTAvatar(obj *types.ObjectRead) *NFTAvatar {
-	if obj == nil || obj.Status != types.ObjectStatusExists {
+func mapToNFTAvatar(obj *types.SuiObjectData) *NFTAvatar {
+	if obj == nil || obj.Content == nil {
 		return nil
 	}
 
-	meta := struct {
+	content := struct {
 		Type   string `json:"type"`
 		Fields struct {
-			Id struct {
-				Id string `json:"id"`
-			} `json:"id"`
-			Url string `json:"url"`
+			Url  string `json:"url"`
+			Name string `json:"name"`
 		} `json:"fields"`
 	}{}
-	metaBytes, err := json.Marshal(obj.Details.Data)
+	contentData, err := json.Marshal(obj.Content)
 	if err != nil {
 		return nil
 	}
-	err = json.Unmarshal(metaBytes, &meta)
+	err = json.Unmarshal(contentData, &content)
 	if err != nil {
 		return nil
 	}
 
 	return &NFTAvatar{
-		Id:    meta.Fields.Id.Id,
-		Image: strings.Replace(meta.Fields.Url, "ipfs://", "https://ipfs.io/ipfs/", 1),
-		Type:  meta.Type,
+		Id:    obj.ObjectId.String(),
+		Image: strings.Replace(content.Fields.Url, "ipfs://", "https://ipfs.io/ipfs/", 1),
+		Type:  content.Type,
+		Name:  content.Fields.Name,
 	}
 }
 
@@ -166,8 +169,9 @@ func (p *Poster) QuerySuiNameByAddress(address string) (*base.OptionalString, er
 	if err != nil {
 		return nil, err
 	}
-	objs, err := client.BatchGetFilteredObjectsOwnedByAddress(context.Background(), *addr, func(oi types.ObjectInfo) bool {
-		if strings.HasSuffix(oi.Type, "::base_registrar::RegistrationNFT") {
+	options := types.SuiObjectDataOptions{ShowType: true, ShowContent: true}
+	objs, err := client.BatchGetFilteredObjectsOwnedByAddress(context.Background(), *addr, options, func(oi *types.SuiObjectData) bool {
+		if strings.HasSuffix(*oi.Type, "::registrar::RegistrationNFT") {
 			return true
 		}
 		return false
@@ -176,21 +180,9 @@ func (p *Poster) QuerySuiNameByAddress(address string) (*base.OptionalString, er
 		return nil, err
 	}
 	for _, obj := range objs {
-		var out struct {
-			Fields struct {
-				Name string `json:"name"`
-			} `json:"fields"`
-		}
-		data, err := json.Marshal(obj.Details.Data)
-		if err != nil {
-			continue
-		}
-		err = json.Unmarshal(data, &out)
-		if err != nil {
-			continue
-		}
-		if out.Fields.Name != "" {
-			return &base.OptionalString{Value: out.Fields.Name}, nil
+		nft := mapToNFTAvatar(obj.Data)
+		if nft != nil && nft.Name != "" {
+			return &base.OptionalString{Value: nft.Name}, nil
 		}
 	}
 	return nil, fmt.Errorf("sui name by address `%v` not found", address)

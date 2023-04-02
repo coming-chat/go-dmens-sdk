@@ -3,8 +3,8 @@ module github.com/coming-chat/go-dmens-sdk
 go 1.19
 
 require (
-	github.com/coming-chat/go-sui v0.0.0-20230302033519-1628554cea3a
-	github.com/coming-chat/wallet-SDK v0.2.7-0.20230323072241-7f9acd7c8357
+	github.com/coming-chat/go-sui v0.0.0-20230402085330-845b5d69c48a
+	github.com/coming-chat/wallet-SDK v0.2.7-0.20230402090038-70ffe4a7f056
 	github.com/stretchr/testify v1.8.1
 )
 
@@ -24,6 +24,7 @@ require (
 	github.com/mimoo/StrobeGo v0.0.0-20181016162300-f8f6d4d2b643 // indirect
 	github.com/pierrec/xxHash v0.1.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/tyler-smith/go-bip39 v1.1.0 // indirect
 	github.com/vedhavyas/go-subkey v1.0.2 // indirect
 	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect

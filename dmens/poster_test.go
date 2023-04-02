@@ -21,9 +21,9 @@ func DefaultPoster(t *testing.T) *Poster {
 	address := ""
 	switch whoami {
 	case "gg":
-		address = "0x6c5d2cd6e62734f61b4e318e58cbfd1c4b99dfaf"
+		address = "0x7e875ea78ee09f08d72e2676cf84e0f1c8ac61d94fa339cc8e37cace85bebc6e"
 	default:
-		address = "0x6fc6148816617c3c3eccb1d09e930f73f6712c9c"
+		address = "0x7e875ea78ee09f08d72e2676cf84e0f1c8ac61d94fa339cc8e37cace85bebc6e"
 	}
 	poster, err := NewPoster(&PosterConfig{Address: address}, DevnetConfig)
 	require.Nil(t, err)
