@@ -8,6 +8,31 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestRegister(t *testing.T) {
+	profile := Profile{
+		Name: "zhiuaanngggg",
+	}
+
+	acc, err := sui.NewAccountWithMnemonic(M1)
+	require.Nil(t, err)
+
+	poster := DefaultPoster(t)
+	poster.Address = acc.Address()
+
+	p, err := poster.CheckProfile(&profile)
+	require.Nil(t, err)
+
+	txn, err := poster.Register(p)
+	require.Nil(t, err)
+
+	signedTxn, err := txn.SignWithAccount(acc)
+	require.Nil(t, err)
+
+	hash, err := poster.chain.SendRawTransaction(signedTxn.Value)
+	require.Nil(t, err)
+	t.Log(hash)
+}
+
 func TestPoster_CheckProfile(t *testing.T) {
 	type fields struct {
 		Configuration *Configuration
