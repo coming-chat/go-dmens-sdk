@@ -121,11 +121,7 @@ func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (map[string]*NFTAvata
 	results := make(map[string]*NFTAvatar)
 	for _, ele := range elems {
 		if ele.Error != nil {
-			if ele.Error.NotExists == nil {
-				return nil, fmt.Errorf("some nft not found")
-			} else {
-				return nil, fmt.Errorf("the nft '%v' was not found", ele.Error.NotExists.ObjectId.String())
-			}
+			return nil, fmt.Errorf("some nft not found")
 		}
 		avatar := mapToNFTAvatar(ele.Data)
 		if avatar != nil {
