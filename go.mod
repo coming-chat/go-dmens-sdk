@@ -3,8 +3,8 @@ module github.com/coming-chat/go-dmens-sdk
 go 1.19
 
 require (
-	github.com/coming-chat/go-sui v0.0.0-20230403071508-e8a85b343d56
-	github.com/coming-chat/wallet-SDK v0.2.7-0.20230403104404-6fc938c9bc4c
+	github.com/coming-chat/go-sui v0.0.0-20230404031843-fb42bd5ff027
+	github.com/coming-chat/wallet-SDK v0.2.7-0.20230404032547-411cf900c845
 	github.com/stretchr/testify v1.8.1
 )
 
