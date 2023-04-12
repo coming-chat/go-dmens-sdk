@@ -11,6 +11,7 @@ import (
 
 var whoami = ""
 var M1 = os.Getenv("WalletSdkTestM1")
+var M1Address = "0x7e875ea78ee09f08d72e2676cf84e0f1c8ac61d94fa339cc8e37cace85bebc6e"
 
 func init() {
 	out, _ := exec.Command("whoami").Output()
@@ -21,9 +22,9 @@ func DefaultPoster(t *testing.T) *Poster {
 	address := ""
 	switch whoami {
 	case "gg":
-		address = "0x7e875ea78ee09f08d72e2676cf84e0f1c8ac61d94fa339cc8e37cace85bebc6e"
+		address = M1Address
 	default:
-		address = "0x7e875ea78ee09f08d72e2676cf84e0f1c8ac61d94fa339cc8e37cace85bebc6e"
+		address = M1Address
 	}
 	poster, err := NewPoster(&PosterConfig{Address: address}, DevnetConfig)
 	require.Nil(t, err)
