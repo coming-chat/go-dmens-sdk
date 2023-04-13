@@ -8,7 +8,7 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, afterCursor string) (*NotePa
 			$dmensObjectType: String
 			$objectOwner: String
 			$first: Int
-			$action: Int
+			$action: String
 		  ) {
 			home(
 			  dmensMetaObjectType: $dmensMetaObjectType
@@ -38,7 +38,7 @@ func (p *Poster) QueryNotesMyFollowed(pageSize int, afterCursor string) (*NotePa
 			"dmensObjectType":     p.dmensObjectType(),
 			"objectOwner":         p.Address,
 			"first":               pageSize,
-			"action":              ACTION_POST,
+			"action":              "0", //ACTION_POST,
 		},
 		Cursor: afterCursor,
 	}

@@ -26,7 +26,7 @@ func DefaultPoster(t *testing.T) *Poster {
 	default:
 		address = M1Address
 	}
-	poster, err := NewPoster(&PosterConfig{Address: address}, DevnetConfig)
+	poster, err := NewPoster(&PosterConfig{Address: address}, TestnetConfig)
 	require.Nil(t, err)
 	return poster
 }

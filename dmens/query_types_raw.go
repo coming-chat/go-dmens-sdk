@@ -29,10 +29,10 @@ type rawNote struct {
 		Value struct {
 			// Type string `json:"type"`
 			Fields struct {
-				Action NoteAction `json:"action"`
-				Text   string     `json:"text"`
-				Poster string     `json:"poster"`
-				RefId  string     `json:"ref_id"`
+				Action rawNoteAction `json:"action"`
+				Text   string        `json:"text"`
+				Poster string        `json:"poster"`
+				RefId  string        `json:"ref_id"`
 
 				// rawFieldsId
 				// Url    string     `json:"url"`
@@ -65,7 +65,7 @@ func (a *rawNote) MapToNote() *Note {
 	return &Note{
 		CreateTime: timestamp,
 		NoteId:     a.ObjectId,
-		Action:     fields.Action,
+		Action:     fields.Action.Value,
 		Text:       fields.Text,
 		Poster:     fields.Poster,
 		RefId:      fields.RefId,

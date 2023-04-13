@@ -90,10 +90,10 @@ func (p *Poster) BatchQueryNoteStatusByIds(noteIds []string, viewer string) (map
 	}
 
 	type rawCounter struct {
-		Id          string     `json:"id"`
-		Action      NoteAction `json:"action"`
-		ActionCount int64      `json:"actionCount,string"`
-		PosterCount int64      `json:"posterCount,string"`
+		Id          string        `json:"id"`
+		Action      rawNoteAction `json:"action"`
+		ActionCount int64         `json:"actionCount,string"`
+		PosterCount int64         `json:"posterCount,string"`
 	}
 	var out []struct {
 		Node rawCounter `json:"node"`
@@ -117,7 +117,7 @@ func (p *Poster) BatchQueryNoteStatusByIds(noteIds []string, viewer string) (map
 
 		isViewerActioned := (counter.PosterCount > 0)
 		count := counter.ActionCount
-		switch counter.Action {
+		switch counter.Action.Value {
 		case ACTION_REPLY:
 			status.ReplyCount = count
 		case ACTION_REPOST:
