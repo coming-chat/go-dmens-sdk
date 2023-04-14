@@ -93,9 +93,11 @@ func (p *Poster) QueryNFTAvatar(nftId string) (*NFTAvatar, error) {
 	return nil, fmt.Errorf("nft %v not found", nftId)
 }
 
-func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (map[string]*NFTAvatar, error) {
+func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (res map[string]*NFTAvatar, err error) {
+	defer base.CatchPanicAndMapToBasicError(&err)
+
 	if len(nftIds) <= 0 {
-		return nil, nil
+		return
 	}
 
 	ids := make([]types.ObjectId, 0)
@@ -108,14 +110,14 @@ func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (map[string]*NFTAvata
 	}
 	client, err := p.chain.Client()
 	if err != nil {
-		return nil, err
+		return
 	}
 	elems, err := client.MultiGetObjects(context.Background(), ids, &types.SuiObjectDataOptions{
 		ShowType:    true,
 		ShowContent: true,
 	})
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	results := make(map[string]*NFTAvatar)
@@ -160,14 +162,16 @@ func mapToNFTAvatar(obj *types.SuiObjectData) *NFTAvatar {
 	}
 }
 
-func (p *Poster) QuerySuiNameByAddress(address string) (*base.OptionalString, error) {
+func (p *Poster) QuerySuiNameByAddress(address string) (name *base.OptionalString, err error) {
+	defer base.CatchPanicAndMapToBasicError(&err)
+
 	client, err := p.chain.Client()
 	if err != nil {
-		return nil, err
+		return
 	}
 	addr, err := types.NewAddressFromHex(address)
 	if err != nil {
-		return nil, err
+		return
 	}
 	options := types.SuiObjectDataOptions{ShowType: true, ShowContent: true}
 	objs, err := client.BatchGetFilteredObjectsOwnedByAddress(context.Background(), *addr, options, func(oi *types.SuiObjectData) bool {
@@ -177,7 +181,7 @@ func (p *Poster) QuerySuiNameByAddress(address string) (*base.OptionalString, er
 		return false
 	})
 	if err != nil {
-		return nil, err
+		return
 	}
 	for _, obj := range objs {
 		nft := mapToNFTAvatar(obj.Data)

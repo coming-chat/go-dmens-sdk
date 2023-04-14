@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/coming-chat/wallet-SDK/core/base"
 	"github.com/coming-chat/wallet-SDK/core/sui"
 )
 
@@ -46,26 +47,28 @@ func (p *Poster) Register(validProfile *ValidProfile) (*sui.Transaction, error) 
 		})
 }
 
-func (p *Poster) CheckProfile(profile *Profile) (*ValidProfile, error) {
+func (p *Poster) CheckProfile(profile *Profile) (vp *ValidProfile, err error) {
+	defer base.CatchPanicAndMapToBasicError(&err)
+
 	profileBytes, err := json.Marshal(profile)
 	if err != nil {
-		return nil, err
+		return
 	}
 	req, err := http.NewRequest(http.MethodPut, p.ProfileCheckUrl+p.Address, bytes.NewBuffer(profileBytes))
 	if err != nil {
-		return nil, err
+		return
 	}
 	req.Header["Content-Type"] = []string{"application/json"}
 
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return
 	}
 	defer resp.Body.Close()
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return
 	}
 	var respData struct {
 		IsValid   bool    `json:"isValid"`
@@ -75,11 +78,11 @@ func (p *Poster) CheckProfile(profile *Profile) (*ValidProfile, error) {
 
 	err = json.Unmarshal(respBody, &respData)
 	if err != nil {
-		return nil, err
+		return
 	}
 	newProfileData, err := json.Marshal(respData.Profile)
 	if err != nil {
-		return nil, err
+		return
 	}
 	if respData.IsValid {
 		return &ValidProfile{
