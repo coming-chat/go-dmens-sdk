@@ -6,12 +6,14 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/coming-chat/wallet-SDK/core/sui"
 	"github.com/stretchr/testify/require"
 )
 
 var whoami = ""
 var M1 = os.Getenv("WalletSdkTestM1")
-var M1Address = "0x7e875ea78ee09f08d72e2676cf84e0f1c8ac61d94fa339cc8e37cace85bebc6e"
+var M1Account, _ = sui.NewAccountWithMnemonic(M1)
+var M1Address = M1Account.Address()
 
 func init() {
 	out, _ := exec.Command("whoami").Output()
@@ -19,14 +21,7 @@ func init() {
 }
 
 func DefaultPoster(t *testing.T) *Poster {
-	address := ""
-	switch whoami {
-	case "gg":
-		address = M1Address
-	default:
-		address = M1Address
-	}
-	poster, err := NewPoster(&PosterConfig{Address: address}, TestnetConfig)
+	poster, err := NewPoster(&PosterConfig{Address: M1Address}, TestnetConfig)
 	require.Nil(t, err)
 	return poster
 }
@@ -34,4 +29,25 @@ func DefaultPoster(t *testing.T) *Poster {
 func TestNewPoster(t *testing.T) {
 	poster := DefaultPoster(t)
 	require.NotEqual(t, poster.DmensNftId, "")
+}
+
+func TestPostNote(t *testing.T) {
+	poster := DefaultPoster(t)
+
+	// chain := poster.chain
+	chain := sui.NewChainWithRpcUrl("https://fullnode.testnet.sui.io")
+
+	txn, err := poster.DmensPost("Hello world")
+	require.Nil(t, err)
+
+	fee, err := chain.EstimateGasFee(txn)
+	require.Nil(t, err)
+	t.Log(fee.Value)
+
+	signed, err := txn.SignWithAccount(M1Account)
+	require.Nil(t, err)
+
+	hash, err := chain.SendRawTransaction(signed.Value)
+	require.Nil(t, err)
+	t.Log(hash)
 }
