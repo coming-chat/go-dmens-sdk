@@ -21,7 +21,7 @@ func init() {
 }
 
 func DefaultPoster(t *testing.T) *Poster {
-	poster, err := NewPoster(&PosterConfig{Address: M1Address}, TestnetConfig)
+	poster, err := NewPoster(&PosterConfig{Address: M1Address, Reviewing: true}, TestnetConfig)
 	require.Nil(t, err)
 	return poster
 }

@@ -55,7 +55,7 @@ func TestPoster_CheckProfile(t *testing.T) {
 				Configuration: &Configuration{
 					ProfileCheckUrl: "https://coming-zero-dmens-pre.coming.chat/profile/check/",
 				},
-				PosterConfig: NewPosterConfig("0x6fc6148816617c3c3eccb1d09e930f73f6712c9c"),
+				PosterConfig: NewPosterConfig("0x6fc6148816617c3c3eccb1d09e930f73f6712c9c", false),
 				chain:        nil,
 			},
 			args: args{

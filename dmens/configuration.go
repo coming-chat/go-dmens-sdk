@@ -18,13 +18,18 @@ type Configuration struct {
 type PosterConfig struct {
 	Address    string
 	DmensNftId string
+	// Default false
+	Reviewing bool
 
 	dmensTableId string
 	followsId    string
 }
 
-func NewPosterConfig(address string) *PosterConfig {
-	return &PosterConfig{Address: address}
+func NewPosterConfig(address string, reviewing bool) *PosterConfig {
+	return &PosterConfig{
+		Address:   address,
+		Reviewing: reviewing,
+	}
 }
 
 var (

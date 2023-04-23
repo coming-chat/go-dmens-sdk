@@ -15,8 +15,13 @@ func (p *Poster) QueryUserNoteList(user string, pageSize int, afterCursor string
 	if user == "" {
 		user = p.Address
 	}
-	fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, poster: "%v"}}}}`, ACTION_POST, user)
-	return p.queryNoteList(pageSize, afterCursor, fieldJson, true)
+	if p.Reviewing {
+		fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, poster: "%v", app_id: %v}}}}`, ACTION_POST, user, appIdForComingChatApp)
+		return p.queryNoteList(pageSize, afterCursor, fieldJson, true)
+	} else {
+		fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, poster: "%v"}}}}`, ACTION_POST, user)
+		return p.queryNoteList(pageSize, afterCursor, fieldJson, true)
+	}
 }
 
 // QueryUserRepostList
@@ -83,8 +88,13 @@ func (p *Poster) queryUserRepostList(user string, pageSize int, afterCursor stri
 // @param pageSize The number of notes per page.
 // @param afterCursor Each page has a cursor, and you need to specify the cursor to get the next page of content, If you want to get the first page of content, pass in empty.
 func (p *Poster) QueryAllNoteList(pageSize int, afterCursor string) (*NotePage, error) {
-	fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v}}}}`, ACTION_POST)
-	return p.queryNoteList(pageSize, afterCursor, fieldJson, true)
+	if p.Reviewing {
+		fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v, app_id: %v}}}}`, ACTION_POST, appIdForComingChatApp)
+		return p.queryNoteList(pageSize, afterCursor, fieldJson, true)
+	} else {
+		fieldJson := fmt.Sprintf(`fields: { contains: {value: {fields: {action: %v}}}}`, ACTION_POST)
+		return p.queryNoteList(pageSize, afterCursor, fieldJson, true)
+	}
 }
 
 func (p *Poster) queryNoteList(pageSize int, afterCursor string, fieldJson string, needStatus bool) (*NotePage, error) {

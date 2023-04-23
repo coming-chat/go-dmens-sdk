@@ -1,38 +1,44 @@
 package dmens
 
+import "fmt"
+
 func (p *Poster) QueryNotesMyFollowed(pageSize int, afterCursor string) (*NotePage, error) {
-	query := &Query{
-		Query: `
-		query NotesMyFollowed(
-			$dmensMetaObjectType: String
-			$dmensObjectType: String
-			$objectOwner: String
-			$first: Int
-			$action: String
-		  ) {
-			home(
-			  dmensMetaObjectType: $dmensMetaObjectType
-			  dmensObjectType: $dmensObjectType
-			  objectOwner: $objectOwner
-			  first: $first
-			  after: #cursor#
-			  filter: {
-				status: { equalTo: "Exists" }
-				fields: { contains: { value: { fields: { action: $action } } } }
-			  }
-			) {
-			  totalCount
-			  edges {
-				cursor
-				node {
-				  createTime
-				  objectId
-				  fields
-				}
-			  }
+	filterAppid := ""
+	if p.Reviewing {
+		filterAppid = fmt.Sprintf("app_id: %v,", appIdForComingChatApp)
+	}
+	queryString := fmt.Sprintf(`
+	query NotesMyFollowed(
+		$dmensMetaObjectType: String
+		$dmensObjectType: String
+		$objectOwner: String
+		$first: Int
+		$action: String
+	  ) {
+		home(
+		  dmensMetaObjectType: $dmensMetaObjectType
+		  dmensObjectType: $dmensObjectType
+		  objectOwner: $objectOwner
+		  first: $first
+		  after: #cursor#
+		  filter: {
+			status: { equalTo: "Exists" }
+			fields: { contains: { value: { fields: { %v action: $action } } } }
+		  }
+		) {
+		  totalCount
+		  edges {
+			cursor
+			node {
+			  createTime
+			  objectId
+			  fields
 			}
 		  }
-		`,
+		}
+	  }`, filterAppid)
+	query := &Query{
+		Query: queryString,
 		Variables: map[string]interface{}{
 			"dmensMetaObjectType": p.dmensMetaObjectType(),
 			"dmensObjectType":     p.dmensObjectType(),
