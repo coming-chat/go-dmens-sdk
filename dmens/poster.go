@@ -29,6 +29,11 @@ func NewPoster(posterConfig *PosterConfig, configuration *Configuration) (*Poste
 	return poster, nil
 }
 
+func (p *Poster) SwitchRpcUrl(rpc string) {
+	p.FullNodeUrl = rpc
+	p.chain = sui.NewChainWithRpcUrl(rpc)
+}
+
 func (p *Poster) IsRegister() bool {
 	if p.DmensNftId != "" {
 		return true

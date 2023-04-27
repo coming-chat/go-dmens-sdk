@@ -38,10 +38,12 @@ func (p *Poster) FetchDmensGlobalConfig() error {
 	}
 	node := out[0]
 	p.Name = node.ChainName
-	p.FullNodeUrl = node.FullNodeUrl
 	p.ContractAddress = node.ContractAddress
 	p.GlobalProfileId = node.GlobalProfileId
 	p.GlobalProfileTableId = node.GlobalProfileTableId
 	p.ProfileCheckUrl = node.ProfileCheckUrl
+	if p.FullNodeUrl == "" {
+		p.FullNodeUrl = node.FullNodeUrl
+	}
 	return nil
 }
