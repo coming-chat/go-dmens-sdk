@@ -5,60 +5,64 @@ go sdk for [Dmens](https://github.com/coming-chat/Dmens) used by ComingChat App
 ## Usage
 
 Maybe you have a sui account and a sui chain
-```
-let suiAccount = SuiNewAccount(mnemonic)
-let suiChain = SuiNewChain(rpcUrl)
+```golang
+var suiAccount = SuiNewAccount(mnemonic)
+var suiChain = SuiNewChain(rpcUrl)
 ```
 
 * New poster
-```
-let configuration = DevnetConfig()
-let poster = NewPosterWithAddress(suiAccount.Address(), configuration)
+```golang
+var configuration = DevnetConfig()
+configuration.FullNodeUrl = "https://fullnode.testnet.sui.io" // Custom rpc url
+var poster = NewPosterWithAddress(suiAccount.Address(), configuration)
+
+// switch rpcUrl
+poster.SwitchRpcUrl("http://....")
 ```
 
 * Build action's transaction
 
 ```go
 // register or update dmens user info
-let txn = Register(Profile{
+var txn = Register(Profile{
     Name: "MyName"
 	Bio: ""
 	Avatar: "https://xxxx.xxx"
 })
 
 // post a new note
-let txn = poster.DmensPost("note text content")
+var txn = poster.DmensPost("note text content")
 
 // replay a note
-let txn = poster.DmensPostWithRef(ACTION_REPLY, "reply text content", refNoteId)
+var txn = poster.DmensPostWithRef(ACTION_REPLY, "reply text content", refNoteId)
 
 // like/repost/quote a note
-let txn = poster.DmensPostWithRef(ACTION_LIKE, "", refNoteId)
-let txn = poster.DmensPostWithRef(ACTION_REPOST, "", refNoteId)
-let txn = poster.DmensPostWithRef(ACTION_QUOTE_POST, "", refNoteId)
+var txn = poster.DmensPostWithRef(ACTION_LIKE, "", refNoteId)
+var txn = poster.DmensPostWithRef(ACTION_REPOST, "", refNoteId)
+var txn = poster.DmensPostWithRef(ACTION_QUOTE_POST, "", refNoteId)
 
 // follow & unfollow other users
-let txn = poster.DmensFollow([address1, address2, address3, ...])
-let txn = poster.DmensUnfollow([address1, address2, address3, ...])
+var txn = poster.DmensFollow([address1, address2, address3, ...])
+var txn = poster.DmensUnfollow([address1, address2, address3, ...])
 ```
 
 * Get max gas budget
 ```go
-let maxGasBudget = txn.maxGasBudget
+var maxGasBudget = txn.maxGasBudget
 ```
 
 
 * Estimate transaction gas fee
 ```go
-let gasFee = suiChain.EstimateGasFee(txn)
+var gasFee = suiChain.EstimateGasFee(txn)
 print("estimate transaction gas fee = " gasFee.Value)
 ```
 
 * Sign & Send transaction
 ```go
-let signedTxn = txn.SignWithAccount(suiAccount)
+var signedTxn = txn.SignWithAccount(suiAccount)
 
-let txnHash = suiChain.SendRawTransaction(signedTxn.Value)
+var txnHash = suiChain.SendRawTransaction(signedTxn.Value)
 
 print("transaction hash = ", txnHash.Value)
 
@@ -115,20 +119,20 @@ print(name)
 
   ```go
   // query the following status of a specified user.
-  let isFollowing = poster.IsMyFollowing(specifiedUser)
+  var isFollowing = poster.IsMyFollowing(specifiedUser)
   
   // batch query the following status of all users in a specified list.
-  let userPage: *UserPage = ...
+  var userPage: *UserPage = ...
   err = poster.BatchQueryIsFollowingStatus(userPage)
   
   // query following list
-  let users = poster.QueryUserFollowing("", pageSize, cursor)
+  var users = poster.QueryUserFollowing("", pageSize, cursor)
   
   // query follower list
-  let users = poster.QueryUserFollowers("", pageSize, cursor)
+  var users = poster.QueryUserFollowers("", pageSize, cursor)
   
   // get follow count
-  let counter = poster.QueryUserFollowCount("")
+  var counter = poster.QueryUserFollowCount("")
   print(counter.FollowerCount)
   print(counter.FollowingCount)
   ```
