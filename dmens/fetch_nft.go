@@ -2,12 +2,12 @@ package dmens
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/coming-chat/go-sui/types"
 	"github.com/coming-chat/wallet-SDK/core/base"
+	"github.com/coming-chat/wallet-SDK/core/sui"
 )
 
 type NFTAvatar struct {
@@ -114,7 +114,7 @@ func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (res map[string]*NFTA
 	}
 	elems, err := client.MultiGetObjects(context.Background(), ids, &types.SuiObjectDataOptions{
 		ShowType:    true,
-		ShowContent: true,
+		ShowDisplay: true,
 	})
 	if err != nil {
 		return
@@ -122,10 +122,7 @@ func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (res map[string]*NFTA
 
 	results := make(map[string]*NFTAvatar)
 	for _, ele := range elems {
-		if ele.Error != nil {
-			return nil, fmt.Errorf("some nft not found")
-		}
-		avatar := mapToNFTAvatar(ele.Data)
+		avatar := mapToNFTAvatar(ele)
 		if avatar != nil {
 			results[avatar.Id] = avatar
 		}
@@ -133,32 +130,20 @@ func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (res map[string]*NFTA
 	return results, nil
 }
 
-func mapToNFTAvatar(obj *types.SuiObjectData) *NFTAvatar {
-	if obj == nil || obj.Content == nil {
+func mapToNFTAvatar(obj types.SuiObjectResponse) *NFTAvatar {
+	nft := sui.TransformNFT(&obj)
+	if nft == nil {
 		return nil
 	}
-
-	content := struct {
-		Type   string `json:"type"`
-		Fields struct {
-			Url  string `json:"url"`
-			Name string `json:"name"`
-		} `json:"fields"`
-	}{}
-	contentData, err := json.Marshal(obj.Content)
-	if err != nil {
-		return nil
+	typ := ""
+	if obj.Data.Type != nil {
+		typ = *obj.Data.Type
 	}
-	err = json.Unmarshal(contentData, &content)
-	if err != nil {
-		return nil
-	}
-
 	return &NFTAvatar{
-		Id:    obj.ObjectId.String(),
-		Image: strings.Replace(content.Fields.Url, "ipfs://", "https://ipfs.io/ipfs/", 1),
-		Type:  content.Type,
-		Name:  content.Fields.Name,
+		Id:    nft.Id,
+		Image: nft.Image,
+		Type:  typ,
+		Name:  nft.Name,
 	}
 }
 
@@ -184,8 +169,8 @@ func (p *Poster) QuerySuiNameByAddress(address string) (name *base.OptionalStrin
 		return
 	}
 	for _, obj := range objs {
-		nft := mapToNFTAvatar(obj.Data)
-		if nft != nil && nft.Name != "" {
+		nft := mapToNFTAvatar(obj)
+		if nft != nil {
 			return &base.OptionalString{Value: nft.Name}, nil
 		}
 	}
