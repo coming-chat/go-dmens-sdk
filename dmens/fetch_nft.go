@@ -158,7 +158,9 @@ func (p *Poster) QuerySuiNameByAddress(address string) (name *base.OptionalStrin
 	if err != nil {
 		return
 	}
-	options := types.SuiObjectDataOptions{ShowType: true, ShowContent: true}
+	options := types.SuiObjectDataOptions{
+		ShowType:    true,
+		ShowDisplay: true}
 	objs, err := client.BatchGetFilteredObjectsOwnedByAddress(context.Background(), *addr, options, func(oi *types.SuiObjectData) bool {
 		if strings.HasSuffix(*oi.Type, "::registrar::RegistrationNFT") {
 			return true
