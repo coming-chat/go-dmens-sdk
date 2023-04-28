@@ -16,6 +16,7 @@ const (
 
 	functionPost     = "post"
 	functionPostRef  = "post_with_ref"
+	functionLike     = "like"
 	functionFollow   = "follow"
 	functionUnfollow = "unfollow"
 )
@@ -30,13 +31,28 @@ func (p *Poster) DmensPost(text string) (*sui.Transaction, error) {
 		[]any{
 			p.DmensNftId,
 			appIdForComingChatApp,
-			actionPost,
 			text,
 		},
 	)
 }
 
-func (p *Poster) DmensPostWithRef(action int, text, refIdentifier string) (*sui.Transaction, error) {
+func (p *Poster) DmensPostWithRef(action int, text, refIdentifier, refIdPoster string) (*sui.Transaction, error) {
+	if action == ActionLike {
+		return p.chain.BaseMoveCall(
+			p.Address,
+			p.ContractAddress,
+			dmensModule,
+			functionLike,
+			[]string{},
+			[]any{
+				p.DmensNftId,
+				appIdForComingChatApp,
+				text,
+				refIdentifier,
+				refIdPoster,
+			},
+		)
+	}
 	return p.chain.BaseMoveCall(
 		p.Address,
 		p.ContractAddress,
