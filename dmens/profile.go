@@ -44,7 +44,7 @@ func (p *Poster) Register(validProfile *ValidProfile) (*sui.Transaction, error) 
 			p.GlobalProfileId,
 			validProfile.Profile,
 			validProfile.Signature,
-		})
+		}, 14000000)
 }
 
 func (p *Poster) CheckProfile(profile *Profile) (vp *ValidProfile, err error) {
@@ -112,7 +112,7 @@ func (p *Poster) SetNftAvatar(nftId string) (*sui.Transaction, error) {
 		[]any{
 			p.GlobalProfileId,
 			nft.Id,
-		})
+		}, 0)
 }
 
 func (p *Poster) RemoveNftAvatar(avatar *NFTAvatar) (*sui.Transaction, error) {
@@ -127,5 +127,5 @@ func (p *Poster) RemoveNftAvatar(avatar *NFTAvatar) (*sui.Transaction, error) {
 		[]any{
 			p.GlobalProfileId,
 			avatar.Id,
-		})
+		}, 0)
 }

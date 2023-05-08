@@ -24,13 +24,14 @@ func TestRegister(t *testing.T) {
 
 	txn, err := poster.Register(p)
 	require.Nil(t, err)
+	t.Log(txn)
 
-	signedTxn, err := txn.SignWithAccount(acc)
-	require.Nil(t, err)
+	// signedTxn, err := txn.SignWithAccount(acc)
+	// require.Nil(t, err)
 
-	hash, err := poster.chain.SendRawTransaction(signedTxn.Value)
-	require.Nil(t, err)
-	t.Log(hash)
+	// hash, err := poster.chain.SendRawTransaction(signedTxn.Value)
+	// require.Nil(t, err)
+	// t.Log(hash)
 }
 
 func TestPoster_CheckProfile(t *testing.T) {

@@ -33,6 +33,7 @@ func (p *Poster) DmensPost(text string) (*sui.Transaction, error) {
 			appIdForComingChatApp,
 			text,
 		},
+		0,
 	)
 }
 
@@ -51,6 +52,7 @@ func (p *Poster) DmensPostWithRef(action int, text, refIdentifier, refIdPoster s
 				refIdentifier,
 				refIdPoster,
 			},
+			0,
 		)
 	}
 	return p.chain.BaseMoveCall(
@@ -66,6 +68,7 @@ func (p *Poster) DmensPostWithRef(action int, text, refIdentifier, refIdPoster s
 			text,
 			refIdentifier,
 		},
+		0,
 	)
 }
 
@@ -80,6 +83,7 @@ func (p *Poster) DmensFollow(addresses *base.StringArray) (*sui.Transaction, err
 			p.DmensNftId,
 			addresses.Values,
 		},
+		0,
 	)
 }
 
@@ -94,5 +98,6 @@ func (p *Poster) DmensUnfollow(addresses *base.StringArray) (*sui.Transaction, e
 			p.DmensNftId,
 			addresses.Values,
 		},
+		0,
 	)
 }
