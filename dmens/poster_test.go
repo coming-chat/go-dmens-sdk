@@ -1,11 +1,14 @@
 package dmens
 
 import (
+	"context"
+	"encoding/json"
 	"os"
 	"os/exec"
 	"strings"
 	"testing"
 
+	"github.com/coming-chat/go-sui/types"
 	"github.com/coming-chat/wallet-SDK/core/sui"
 	"github.com/stretchr/testify/require"
 )
@@ -34,20 +37,31 @@ func TestNewPoster(t *testing.T) {
 func TestPostNote(t *testing.T) {
 	poster := DefaultPoster(t)
 
-	// chain := poster.chain
-	chain := sui.NewChainWithRpcUrl("https://fullnode.testnet.sui.io")
+	chain := poster.chain
+	// chain := sui.NewChainWithRpcUrl("https://fullnode.testnet.sui.io")
 
 	txn, err := poster.DmensPost("Hello world")
 	require.Nil(t, err)
 
-	fee, err := chain.EstimateGasFee(txn)
+	fee, err := chain.EstimateTransactionFee(txn)
 	require.Nil(t, err)
 	t.Log(fee.Value)
 
-	signed, err := txn.SignWithAccount(M1Account)
-	require.Nil(t, err)
+	simulateCheck(t, chain, &txn.Txn, true)
+}
 
-	hash, err := chain.SendRawTransaction(signed.Value)
+func simulateCheck(t *testing.T, chain *sui.Chain, txn *types.TransactionBytes, showJson bool) *types.DryRunTransactionBlockResponse {
+	cli, err := chain.Client()
 	require.Nil(t, err)
-	t.Log(hash)
+	resp, err := cli.DryRunTransaction(context.Background(), txn)
+	require.Nil(t, err)
+	require.Equal(t, resp.Effects.Data.V1.Status.Error, "")
+	require.True(t, resp.Effects.Data.IsSuccess())
+	if showJson {
+		data, err := json.Marshal(resp)
+		require.Nil(t, err)
+		respStr := string(data)
+		t.Log("simulate run resp: ", respStr)
+	}
+	return resp
 }
