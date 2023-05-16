@@ -1,7 +1,6 @@
 package dmens
 
 import (
-	"context"
 	"testing"
 
 	"github.com/coming-chat/wallet-SDK/core/base"
@@ -10,6 +9,7 @@ import (
 
 func TestFollow(t *testing.T) {
 	poster := DefaultPoster(t)
+	chain := poster.chain
 
 	address := "0x919da05ad6103df99c988912a2d39475fcc672e2666540ce02e049649957d0b5"
 	array := base.StringArray{Values: []string{address}}
@@ -17,12 +17,7 @@ func TestFollow(t *testing.T) {
 	txn, err := poster.DmensFollow(&array)
 	require.Nil(t, err)
 
-	cli, err := poster.chain.Client()
-	require.Nil(t, err)
-	resp, err := cli.DryRunTransaction(context.Background(), &txn.Txn)
-	require.Nil(t, err)
-
-	t.Log(resp.Effects.Data.V1.Status)
+	simulateCheck(t, chain, txn, true)
 
 	// acc, err := sui.NewAccountWithMnemonic(M1)
 	// require.Nil(t, err)

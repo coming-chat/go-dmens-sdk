@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/coming-chat/go-sui/types"
+	"github.com/coming-chat/go-sui/v2/types"
 	"github.com/coming-chat/wallet-SDK/core/sui"
 	"github.com/stretchr/testify/require"
 )
@@ -47,13 +47,13 @@ func TestPostNote(t *testing.T) {
 	require.Nil(t, err)
 	t.Log(fee.Value)
 
-	simulateCheck(t, chain, &txn.Txn, true)
+	simulateCheck(t, chain, txn, true)
 }
 
-func simulateCheck(t *testing.T, chain *sui.Chain, txn *types.TransactionBytes, showJson bool) *types.DryRunTransactionBlockResponse {
+func simulateCheck(t *testing.T, chain *sui.Chain, txn *sui.Transaction, showJson bool) *types.DryRunTransactionBlockResponse {
 	cli, err := chain.Client()
 	require.Nil(t, err)
-	resp, err := cli.DryRunTransaction(context.Background(), txn)
+	resp, err := cli.DryRunTransaction(context.Background(), txn.TransactionBytes())
 	require.Nil(t, err)
 	require.Equal(t, resp.Effects.Data.V1.Status.Error, "")
 	require.True(t, resp.Effects.Data.IsSuccess())

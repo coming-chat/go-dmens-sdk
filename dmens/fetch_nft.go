@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/coming-chat/go-sui/types"
+	"github.com/coming-chat/go-sui/v2/sui_types"
+	"github.com/coming-chat/go-sui/v2/types"
 	"github.com/coming-chat/wallet-SDK/core/base"
 	"github.com/coming-chat/wallet-SDK/core/sui"
 )
@@ -100,9 +101,9 @@ func (p *Poster) BatchQueryNFTAvatarByIds(nftIds []string) (res map[string]*NFTA
 		return
 	}
 
-	ids := make([]types.ObjectId, 0)
+	ids := make([]sui_types.ObjectID, 0)
 	for _, nftId := range nftIds {
-		id, err := types.NewHexData(nftId)
+		id, err := sui_types.NewObjectIdFromHex(nftId)
 		if err != nil {
 			continue
 		}
@@ -154,7 +155,7 @@ func (p *Poster) QuerySuiNameByAddress(address string) (name *base.OptionalStrin
 	if err != nil {
 		return
 	}
-	addr, err := types.NewAddressFromHex(address)
+	addr, err := sui_types.NewAddressFromHex(address)
 	if err != nil {
 		return
 	}
