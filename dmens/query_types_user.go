@@ -2,6 +2,7 @@ package dmens
 
 import (
 	"github.com/coming-chat/wallet-SDK/core/base"
+	"github.com/coming-chat/wallet-SDK/core/base/inter"
 )
 
 type UserInfo struct {
@@ -38,20 +39,6 @@ func NewUserInfoWithJsonString(str string) (*UserInfo, error) {
 	return &o, err
 }
 
-func (u *UserInfo) AsAny() *base.Any {
-	return &base.Any{Value: u}
-}
-
-func AsUserInfo(a *base.Any) *UserInfo {
-	if res, ok := a.Value.(*UserInfo); ok {
-		return res
-	}
-	if res, ok := a.Value.(UserInfo); ok {
-		return &res
-	}
-	return nil
-}
-
 type UserFollowCount struct {
 	User string `json:"user"`
 
@@ -73,7 +60,7 @@ func NewUserFollowCountWithJsonString(str string) (*UserFollowCount, error) {
 }
 
 type UserPage struct {
-	*sdkPageable[UserInfo]
+	*inter.SdkPageable[*UserInfo]
 }
 
 func NewUserPage() *UserPage {
@@ -81,7 +68,7 @@ func NewUserPage() *UserPage {
 }
 
 func NewUserPageWithJsonString(str string) (*UserPage, error) {
-	var o sdkPageable[UserInfo]
+	var o inter.SdkPageable[*UserInfo]
 	err := base.FromJsonString(str, &o)
 	if err != nil {
 		return nil, err

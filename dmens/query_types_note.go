@@ -2,6 +2,7 @@ package dmens
 
 import (
 	"github.com/coming-chat/wallet-SDK/core/base"
+	"github.com/coming-chat/wallet-SDK/core/base/inter"
 )
 
 type Note struct {
@@ -29,20 +30,6 @@ func NewNoteWithJsonString(str string) (*Note, error) {
 	return &o, err
 }
 
-func (n *Note) AsAny() *base.Any {
-	return &base.Any{Value: n}
-}
-
-func AsNote(any *base.Any) *Note {
-	if res, ok := any.Value.(*Note); ok {
-		return res
-	}
-	if res, ok := any.Value.(Note); ok {
-		return &res
-	}
-	return nil
-}
-
 type RepostNote struct {
 	*Note        // origin note info
 	Repost *Note `json:"repost"` // repost note info
@@ -61,30 +48,16 @@ func NewRepostNoteWithJsonString(str string) (*RepostNote, error) {
 	return &o, err
 }
 
-func (n *RepostNote) AsAny() *base.Any {
-	return &base.Any{Value: n}
-}
-
-func AsRepostNote(any *base.Any) *RepostNote {
-	if res, ok := any.Value.(*RepostNote); ok {
-		return res
-	}
-	if res, ok := any.Value.(RepostNote); ok {
-		return &res
-	}
-	return nil
-}
-
 type NotePage struct {
-	*sdkPageable[Note]
+	*inter.SdkPageable[*Note]
 }
 
 func NewNotePage() *NotePage {
-	return &NotePage{}
+	return &NotePage{SdkPageable: &inter.SdkPageable[*Note]{}}
 }
 
 func NewNotePageWithJsonString(str string) (*NotePage, error) {
-	var o sdkPageable[Note]
+	var o inter.SdkPageable[*Note]
 	err := base.FromJsonString(str, &o)
 	if err != nil {
 		return nil, err
@@ -93,7 +66,7 @@ func NewNotePageWithJsonString(str string) (*NotePage, error) {
 }
 
 type RepostNotePage struct {
-	*sdkPageable[RepostNote]
+	*inter.SdkPageable[*RepostNote]
 }
 
 func NewRepostNotePage() *RepostNotePage {
@@ -101,7 +74,7 @@ func NewRepostNotePage() *RepostNotePage {
 }
 
 func NewRepostNotePageWithJsonString(str string) (*RepostNotePage, error) {
-	var o sdkPageable[RepostNote]
+	var o inter.SdkPageable[*RepostNote]
 	err := base.FromJsonString(str, &o)
 	if err != nil {
 		return nil, err

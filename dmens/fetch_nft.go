@@ -39,20 +39,6 @@ func NewNFTAvatarWithJsonString(str string) (*NFTAvatar, error) {
 	return &o, err
 }
 
-func (n *NFTAvatar) AsAny() *base.Any {
-	return &base.Any{Value: n}
-}
-
-func AsNFTAvatar(any *base.Any) *NFTAvatar {
-	if res, ok := any.Value.(*NFTAvatar); ok {
-		return res
-	}
-	if res, ok := any.Value.(NFTAvatar); ok {
-		return &res
-	}
-	return nil
-}
-
 func (p *Poster) BatchQueryNFTAvatarForUserPage(page *UserPage) error {
 	ids := make([]string, 0)
 	for _, user := range page.Items {

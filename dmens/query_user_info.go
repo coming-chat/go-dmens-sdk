@@ -23,7 +23,7 @@ func (p *Poster) BatchQueryUserByAddressJson(jsonString string) (*UserPage, erro
 }
 
 func (p *Poster) BatchQueryUserByAddressArray(array *base.StringArray) (*UserPage, error) {
-	data, err := json.Marshal(array.Values)
+	data, err := json.Marshal(array)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (p *Poster) QueryUserInfoByAddress(address string) (*UserInfo, error) {
 		return nil, err
 	}
 
-	user := page.FirstObject()
+	user := page.ItemAt(0)
 	if user == nil {
 		return nil, nil
 	}

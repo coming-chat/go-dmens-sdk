@@ -2,6 +2,8 @@ package dmens
 
 import (
 	"time"
+
+	"github.com/coming-chat/wallet-SDK/core/base/inter"
 )
 
 type rawFieldsId struct {
@@ -87,10 +89,10 @@ type rawPageable[O rawUser | rawNote | rawTrendUser, M UserInfo | Note] struct {
 	PageInfo *rawPageInfo `json:"pageInfo,omitempty"`
 }
 
-func (p *rawPageable[O, M]) mapToSdkPage(pageSize int, maper func(O) *M) *sdkPageable[M] {
+func (p *rawPageable[O, M]) mapToSdkPage(pageSize int, maper func(O) *M) *inter.SdkPageable[*M] {
 	currentCount := len(p.Edges)
 	if currentCount == 0 {
-		return &sdkPageable[M]{
+		return &inter.SdkPageable[*M]{
 			TotalCount_: p.TotalCount,
 		}
 	}
@@ -98,7 +100,7 @@ func (p *rawPageable[O, M]) mapToSdkPage(pageSize int, maper func(O) *M) *sdkPag
 	for idx, node := range p.Edges {
 		items[idx] = maper(node.Node)
 	}
-	page := &sdkPageable[M]{
+	page := &inter.SdkPageable[*M]{
 		TotalCount_:    p.TotalCount,
 		CurrentCount_:  currentCount,
 		CurrentCursor_: p.Edges[currentCount-1].Cursor,

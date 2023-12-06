@@ -11,10 +11,10 @@ func TestFollow(t *testing.T) {
 	poster := DefaultPoster(t)
 	chain := poster.chain
 
-	address := "0x919da05ad6103df99c988912a2d39475fcc672e2666540ce02e049649957d0b5"
-	array := base.StringArray{Values: []string{address}}
+	address := "0x45d8252c6f56e8c3b7a704e5130654c5737e19df1db9e60e453030bd7fbd2d05"
+	array := base.NewStringArrayWithItem(address)
 
-	txn, err := poster.DmensFollow(&array)
+	txn, err := poster.DmensFollow(array)
 	require.Nil(t, err)
 
 	simulateCheck(t, chain, txn, true)
@@ -62,14 +62,14 @@ func TestBatchQueryNoteByIds(t *testing.T) {
 
 func TestQueryUserFollowing(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserFollowing("0x919da05ad6103df99c988912a2d39475fcc672e2666540ce02e049649957d0b5", 5, "")
+	res, err := poster.QueryUserFollowing("", 5, "")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
 
 func TestQueryUserFollowers(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUserFollowers("0x919da05ad6103df99c988912a2d39475fcc672e2666540ce02e049649957d0b5", 5, "")
+	res, err := poster.QueryUserFollowers("", 5, "")
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 }
@@ -207,27 +207,23 @@ func TestBatchQueryFollowingStatus(t *testing.T) {
 
 func TestAsUserInfo(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryUsersByName("g", 10, "")
+	page, err := poster.QueryUsersByName("g", 10, "")
 	require.Nil(t, err)
 
-	userArray := res.ItemArray()
-	for i := 0; i < res.CurrentCount(); i++ {
-		userAny := userArray.ValueOf(i)
-		user := AsUserInfo(userAny)
+	for i := 0; i < page.CurrentCount(); i++ {
+		user := page.ItemAt(i)
 		t.Log(user.JsonString())
 	}
 }
 
 func TestAsNote(t *testing.T) {
 	poster := DefaultPoster(t)
-	res, err := poster.QueryNotesMyFollowed(10, "")
+	page, err := poster.QueryNotesMyFollowed(10, "")
 	// res, err := poster.QueryTrendNoteList(10, "")
 	require.Nil(t, err)
 
-	noteArray := res.ItemArray()
-	for i := 0; i < res.CurrentCount(); i++ {
-		noteAny := noteArray.ValueOf(i)
-		note := AsNote(noteAny)
+	for i := 0; i < page.CurrentCount(); i++ {
+		note := page.ItemAt(i)
 		t.Log(note.JsonString())
 	}
 }
@@ -236,15 +232,13 @@ func TestJsonable(t *testing.T) {
 	poster := DefaultPoster(t)
 
 	// --------------- NotePage
-	notes, err := poster.QueryTrendNoteList(3, "")
+	notes, err := poster.QueryAllNoteList(3, "")
 	require.Nil(t, err)
 	require.GreaterOrEqual(t, notes.TotalCount(), 1)
 	require.LessOrEqual(t, notes.CurrentCount(), 3)
 
-	jsonString, err := notes.JsonString()
-	require.Nil(t, err)
-
-	newNotes, err := NewNotePageWithJsonString(jsonString.Value)
+	jsonString := notes.JsonString()
+	newNotes, err := NewNotePageWithJsonString(jsonString)
 	require.Nil(t, err)
 	require.Equal(t, notes, newNotes)
 
@@ -254,10 +248,8 @@ func TestJsonable(t *testing.T) {
 	require.GreaterOrEqual(t, users.TotalCount(), 1)
 	require.LessOrEqual(t, users.CurrentCount(), 3)
 
-	jsonString, err = users.JsonString()
-	require.Nil(t, err)
-
-	newUsers, err := NewUserPageWithJsonString(jsonString.Value)
+	jsonString = users.JsonString()
+	newUsers, err := NewUserPageWithJsonString(jsonString)
 	require.Nil(t, err)
 	require.Equal(t, users, newUsers)
 }

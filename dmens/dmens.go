@@ -81,7 +81,7 @@ func (p *Poster) DmensFollow(addresses *base.StringArray) (*sui.Transaction, err
 		[]string{},
 		[]any{
 			p.DmensNftId,
-			addresses.Values,
+			addresses.AnyArray,
 		},
 		0,
 	)
@@ -96,7 +96,7 @@ func (p *Poster) DmensUnfollow(addresses *base.StringArray) (*sui.Transaction, e
 		[]string{},
 		[]any{
 			p.DmensNftId,
-			addresses.Values,
+			addresses.AnyArray,
 		},
 		0,
 	)

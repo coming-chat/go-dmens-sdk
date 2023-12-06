@@ -2,6 +2,8 @@ package dmens
 
 import (
 	"fmt"
+
+	"github.com/coming-chat/wallet-SDK/core/base/inter"
 )
 
 func (p *Poster) QueryReplyNoteList(noteId string, pageSize int, afterCursor string) (*NotePage, error) {
@@ -49,7 +51,7 @@ func (p *Poster) QueryUserRepostListAsNotePage(user string, pageSize int, afterC
 		originNotes = append(originNotes, repost.Note)
 	}
 	resPage := &NotePage{
-		sdkPageable: &sdkPageable[Note]{
+		SdkPageable: &inter.SdkPageable[*Note]{
 			Items:          originNotes,
 			CurrentCount_:  len(originNotes),
 			TotalCount_:    repostPage.TotalCount_,
@@ -70,7 +72,7 @@ func (p *Poster) queryUserRepostList(user string, pageSize int, afterCursor stri
 		return nil, nil, err
 	}
 	if repostPage.CurrentCount() == 0 {
-		return repostPage, &NotePage{sdkPageable: &sdkPageable[Note]{}}, nil
+		return repostPage, NewNotePage(), nil
 	}
 
 	originNoteIds := make([]string, len(repostPage.Items))

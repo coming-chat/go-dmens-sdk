@@ -23,8 +23,17 @@ func init() {
 	whoami = strings.TrimSpace(string(out))
 }
 
-func DefaultPoster(t *testing.T) *Poster {
+var DefaultPoster = MainnetPoster
+
+func TestnetPoster(t *testing.T) *Poster {
 	poster, err := NewPoster(&PosterConfig{Address: M1Address, Reviewing: true}, TestnetConfig)
+	require.Nil(t, err)
+	return poster
+}
+
+func MainnetPoster(t *testing.T) *Poster {
+	address := "0xddddc76021fdf64f3cff4443dd34a321b0a2ea1a2f7914b0b9722bf4b7623af6"
+	poster, err := NewPoster(&PosterConfig{Address: address, Reviewing: true}, MainnetConfig)
 	require.Nil(t, err)
 	return poster
 }
