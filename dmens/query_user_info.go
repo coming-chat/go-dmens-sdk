@@ -51,10 +51,10 @@ func (p *Poster) QueryUserInfoByAddress(address string) (*UserInfo, error) {
 		return nil, err
 	}
 
-	user := page.ItemAt(0)
-	if user == nil {
+	if len(page.Items) <= 0 {
 		return nil, nil
 	}
+	user := page.ItemAt(0)
 	name, _ := p.QuerySuiNameByAddress(user.Address)
 	if name != nil {
 		user.SuiName = name.Value
