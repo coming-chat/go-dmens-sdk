@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const graphqlURL = "https://graphql.coming.chat/sui-devnet/graphql"
+const graphqlURL = "https://graphql.coming.chat/sui-mainnet/graphql"
 
 func TestXxx(t *testing.T) {
 	query := `

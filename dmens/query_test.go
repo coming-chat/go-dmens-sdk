@@ -108,6 +108,11 @@ func TestQueryUserInfoByAddress(t *testing.T) {
 	require.Nil(t, err)
 	t.Log(res.JsonString())
 
+	// query user not exists
+	res, err = poster.QueryUserInfoByAddress("0x1")
+	require.Nil(t, err)
+	require.Nil(t, res)
+
 	// query specified user's info
 	// res, err = poster.QueryUserInfoByAddress("0x5cbf57ec2dd5c4eb0560ee6ac20e9f8f3a75eca1")
 
