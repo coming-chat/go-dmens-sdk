@@ -21,7 +21,7 @@ func TestQuerySuiNameByAddress(t *testing.T) {
 	name, err := poster.QuerySuiNameByAddress(owner)
 	require.Error(t, err)
 
-	owner = "0x7e875ea78ee09f08d72e2676cf84e0f1c8ac61d94fa339cc8e37cace85bebc6e"
+	owner = "0x57188743983628b3474648d8aa4a9ee8abebe8f6816243773d7e8ed4fd833a28"
 	name, err = poster.QuerySuiNameByAddress(owner)
 	require.NoError(t, err)
 	t.Log(name.Value)

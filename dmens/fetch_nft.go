@@ -3,7 +3,6 @@ package dmens
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/coming-chat/go-sui/v2/sui_types"
 	"github.com/coming-chat/go-sui/v2/types"
@@ -145,23 +144,12 @@ func (p *Poster) QuerySuiNameByAddress(address string) (name *base.OptionalStrin
 	if err != nil {
 		return
 	}
-	options := types.SuiObjectDataOptions{
-		ShowType:    true,
-		ShowDisplay: true}
-	objs, err := client.BatchGetFilteredObjectsOwnedByAddress(context.Background(), *addr, options, func(oi *types.SuiObjectData) bool {
-		if strings.HasSuffix(*oi.Type, "::registrar::RegistrationNFT") {
-			return true
-		}
-		return false
-	})
+	namePage, err := client.ResolveNameServiceNames(context.Background(), *addr, nil, nil)
 	if err != nil {
 		return
 	}
-	for _, obj := range objs {
-		nft := mapToNFTAvatar(obj)
-		if nft != nil {
-			return &base.OptionalString{Value: nft.Name}, nil
-		}
+	if len(namePage.Data) > 0 {
+		return base.NewOptionalString(namePage.Data[0]), nil
 	}
-	return nil, fmt.Errorf("sui name by address `%v` not found", address)
+	return nil, fmt.Errorf("user does not own sui name")
 }

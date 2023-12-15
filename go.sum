@@ -51,10 +51,10 @@ github.com/cloudflare/cloudflare-go v0.10.2-0.20190916151808-a80f83b9add9/go.mod
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/coming-chat/go-aptos v0.0.0-20230626110140-8331b0e6cdd4 h1:q7Nw6EKABaQ1F9GpybXL58fmpD9ZupRlitP/XZjrOhc=
 github.com/coming-chat/go-aptos v0.0.0-20230626110140-8331b0e6cdd4/go.mod h1:byZxzNOokbO5/mGYTztPhKMUwBnFjn0Tj0bpieocv6I=
-github.com/coming-chat/go-sui/v2 v2.0.1-0.20230518103936-ac853f583e8f h1:KPOGMdQH9cOt+ZMC/BJy8P3SzjOA0TL0zXgs4Pd4fnA=
-github.com/coming-chat/go-sui/v2 v2.0.1-0.20230518103936-ac853f583e8f/go.mod h1:0/cgsi6HcHEfPFC05mY/ovzWuxxpmKxiY0NIEFgMP4g=
-github.com/coming-chat/wallet-SDK v0.2.7-0.20231206082848-5a4be8706de3 h1:B/pqM+Ba0hTEPp5gK00cQBzJiLEonuDvTnMIv7u7H/I=
-github.com/coming-chat/wallet-SDK v0.2.7-0.20231206082848-5a4be8706de3/go.mod h1:5CO6WOFxlKiavmIoSq2wPqsL48htcS1/4CcqPg5VQDY=
+github.com/coming-chat/go-sui/v2 v2.0.1 h1:Mi7IGUvKd8OLP5zA3YhfDN/L5AJTXHsSsJnLb9WX9+4=
+github.com/coming-chat/go-sui/v2 v2.0.1/go.mod h1:0/cgsi6HcHEfPFC05mY/ovzWuxxpmKxiY0NIEFgMP4g=
+github.com/coming-chat/wallet-SDK v0.2.7-0.20231215091548-05619f7757eb h1:l7wx8VRkG7qh4Q4gTI2U5Xbb30RTuV9Y3soaU7wzPII=
+github.com/coming-chat/wallet-SDK v0.2.7-0.20231215091548-05619f7757eb/go.mod h1:HzJmU6XoraQf7f8deMWExGvEwqsXwDE0OBKuK3NYIwI=
 github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d/go.mod h1:tSxLoYXyBmiFeKpvmq4dzayMdCjCnu8uqmCysIGBT2Y=
 github.com/cosmos/go-bip39 v1.0.0 h1:pcomnQdrdH22njcAatO0yWojsUnCO3y2tNoV1cb6hHY=
 github.com/cosmos/go-bip39 v1.0.0/go.mod h1:RNJv0H/pOIVgxw6KS7QeX2a0Uo0aKUlfhZ4xuwvCdJw=
